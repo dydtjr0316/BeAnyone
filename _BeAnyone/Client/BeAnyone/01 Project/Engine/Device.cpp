@@ -223,12 +223,12 @@ void CDevice::CreateRtvAndDsvDescriptorHeaps()
 	rtvHeapDesc.NodeMask = 0;
 	m_pDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_pRtvHeap.GetAddressOf()));
 
-	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
-	dsvHeapDesc.NumDescriptors = 1;
-	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	dsvHeapDesc.NodeMask = 0;
-	m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(m_pDsvHeap.GetAddressOf()));
+	//D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
+	//dsvHeapDesc.NumDescriptors = 1;
+	//dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	//dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	//dsvHeapDesc.NodeMask = 0;
+	//m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(m_pDsvHeap.GetAddressOf()));
 }
 
 void CDevice::CreateView()
@@ -247,65 +247,65 @@ void CDevice::CreateView()
 	}
 
 	// Create the depth/stencil buffer and view.
-	D3D12_RESOURCE_DESC depthStencilDesc = {};
-	depthStencilDesc.MipLevels = 1;
-	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-	depthStencilDesc.Width = (UINT)m_tResolution.fWidth;
-	depthStencilDesc.Height = (UINT)m_tResolution.fHeight;
-	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-	depthStencilDesc.DepthOrArraySize = 1;
-	depthStencilDesc.SampleDesc.Count = 1;
-	depthStencilDesc.SampleDesc.Quality = 0;
-	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	
-	depthStencilDesc.Alignment = 0;
-	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	
-	CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
-
-	HRESULT hr = m_pDevice->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&depthStencilDesc,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		&depthOptimizedClearValue,
-		IID_PPV_ARGS(m_pDepthStencilBuffer.GetAddressOf()));
-
-	if (FAILED(hr))
-		assert(nullptr);
-
-	// 이거 안 넣었음 -> 왜지? nullptr 넣었던데 ...
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
-	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvDesc.Texture2D.MipSlice = 0;
-
-	m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), nullptr, DepthStencilView());
-
-	//D3D12_RESOURCE_BARRIER barrier = {};
-	//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//barrier.Transition.pResource = mDepthStencilBuffer.Get();
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	//D3D12_RESOURCE_DESC depthStencilDesc = {};
+	//depthStencilDesc.MipLevels = 1;
+	//depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	//depthStencilDesc.Width = (UINT)m_tResolution.fWidth;
+	//depthStencilDesc.Height = (UINT)m_tResolution.fHeight;
+	//depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+	//depthStencilDesc.DepthOrArraySize = 1;
+	//depthStencilDesc.SampleDesc.Count = 1;
+	//depthStencilDesc.SampleDesc.Quality = 0;
+	//depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	//
-	//// Transition the resource from its initial state to be used as a depth buffer.
-	//mCommandList->ResourceBarrier(1, &barrier);
+	//depthStencilDesc.Alignment = 0;
+	//depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	//
+	//CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
 
-	// d3dx12.h 헤더가 포함되어야 CD3DX12_~ 를 쓸 수 있음
-	/*mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer.Get(),
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));*/
+	//HRESULT hr = m_pDevice->CreateCommittedResource(
+	//	&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+	//	D3D12_HEAP_FLAG_NONE,
+	//	&depthStencilDesc,
+	//	D3D12_RESOURCE_STATE_DEPTH_WRITE,
+	//	&depthOptimizedClearValue,
+	//	IID_PPV_ARGS(m_pDepthStencilBuffer.GetAddressOf()));
 
-	// Execute the resize commands.
-	//m_pCommandList->Close();
+	//if (FAILED(hr))
+	//	assert(nullptr);
 
-	//ID3D12CommandList* cmdsLists[] = { m_pCommandList.Get() };
-	//m_pCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	//// 이거 안 넣었음 -> 왜지? nullptr 넣었던데 ...
+	//D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	//dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+	//dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	//dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	//dsvDesc.Texture2D.MipSlice = 0;
 
-	//// Wait until resize is complete.
-	//FlushCommandQueue();
-	// -> 이 부분 닫힌 명령 목룍 오류 뜸
+	//m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), nullptr, DepthStencilView());
+
+	////D3D12_RESOURCE_BARRIER barrier = {};
+	////barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	////barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	////barrier.Transition.pResource = mDepthStencilBuffer.Get();
+	////barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+	////barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	////
+	////// Transition the resource from its initial state to be used as a depth buffer.
+	////mCommandList->ResourceBarrier(1, &barrier);
+
+	//// d3dx12.h 헤더가 포함되어야 CD3DX12_~ 를 쓸 수 있음
+	///*mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer.Get(),
+	//	D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));*/
+
+	//// Execute the resize commands.
+	////m_pCommandList->Close();
+
+	////ID3D12CommandList* cmdsLists[] = { m_pCommandList.Get() };
+	////m_pCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	////// Wait until resize is complete.
+	////FlushCommandQueue();
+	//// -> 이 부분 닫힌 명령 목룍 오류 뜸
 }
 
 
