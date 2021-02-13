@@ -80,11 +80,6 @@ void CDevice::render_start(float(&_arrFloat)[4])
 	// RootSignature 설정	
 	CMDLIST->SetGraphicsRootSignature(CDevice::GetInst()->GetRootSignature(ROOT_SIG_TYPE::INPUT_ASSEM).Get());
 
-	//vector<ID3D12DescriptorHeap*> vecCBV;
-	//
-	//vecCBV.push_back(m_pDummyCbvHeap.Get());
-	//m_pCommandList->SetDescriptorHeaps(1/*vecCBV.size()*/, &vecCBV[0]);
-
 	m_pCommandList->RSSetViewports(1, &m_tScreenViewport);
 	m_pCommandList->RSSetScissorRects(1, &m_tScissorRect);
 
@@ -99,17 +94,16 @@ void CDevice::render_start(float(&_arrFloat)[4])
 
 	m_pCommandList->ResourceBarrier(1, &barrier);
 
-	//const float color[4] = { 1.0, 0.7, 0.1, 0.0 };
+	// 타겟 클리어
+	// const float color[4] = { 0.6, 0.6, 0.6, 1.0 };
 	m_pCommandList->ClearRenderTargetView(CurrentBackBufferView(), _arrFloat, 0, nullptr);
+	m_pCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	// Clear the back buffer and depth buffer.
-	// directxcolors.h 없음
-	// mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Honeydew, 0, nullptr);
-	//mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
+	// 타겟 지정
 	// Specify the buffers we are going to render to. => 파이프라인에 묶기?
-	// mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
-	m_pCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), FALSE, nullptr);
+	m_pCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), FALSE, &DepthStencilView());
+
+	// 첫 번째 더미 Descriptor Heap 초기화
 }
 
 void CDevice::render_present()
@@ -134,6 +128,12 @@ void CDevice::render_present()
 	// Present the frame.
 	m_pSwapChain->Present(0, 0);
 	FlushCommandQueue();
+
+	// 상수버퍼 오프셋 초기화
+	for (size_t i = 0; i < m_vecCB.size(); ++i)
+	{
+		m_vecCB[i]->Clear();
+	}
 
 	m_iCurTargetIdx = (m_iCurTargetIdx + 1) % SwapChainBufferCount;
 }
@@ -223,12 +223,12 @@ void CDevice::CreateRtvAndDsvDescriptorHeaps()
 	rtvHeapDesc.NodeMask = 0;
 	m_pDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_pRtvHeap.GetAddressOf()));
 
-	//D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
-	//dsvHeapDesc.NumDescriptors = 1;
-	//dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	//dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	//dsvHeapDesc.NodeMask = 0;
-	//m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(m_pDsvHeap.GetAddressOf()));
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
+	dsvHeapDesc.NumDescriptors = 1;
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	dsvHeapDesc.NodeMask = 0;
+	m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(m_pDsvHeap.GetAddressOf()));
 }
 
 void CDevice::CreateView()
@@ -247,32 +247,32 @@ void CDevice::CreateView()
 	}
 
 	// Create the depth/stencil buffer and view.
-	//D3D12_RESOURCE_DESC depthStencilDesc = {};
-	//depthStencilDesc.MipLevels = 1;
-	//depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-	//depthStencilDesc.Width = (UINT)m_tResolution.fWidth;
-	//depthStencilDesc.Height = (UINT)m_tResolution.fHeight;
-	//depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-	//depthStencilDesc.DepthOrArraySize = 1;
-	//depthStencilDesc.SampleDesc.Count = 1;
-	//depthStencilDesc.SampleDesc.Quality = 0;
-	//depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	//
-	//depthStencilDesc.Alignment = 0;
-	//depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	//
-	//CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
+	D3D12_RESOURCE_DESC depthStencilDesc = {};
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilDesc.Width = (UINT)m_tResolution.fWidth;
+	depthStencilDesc.Height = (UINT)m_tResolution.fHeight;
+	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+	depthStencilDesc.DepthOrArraySize = 1;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	
+	depthStencilDesc.Alignment = 0;
+	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	
+	CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
 
-	//HRESULT hr = m_pDevice->CreateCommittedResource(
-	//	&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-	//	D3D12_HEAP_FLAG_NONE,
-	//	&depthStencilDesc,
-	//	D3D12_RESOURCE_STATE_DEPTH_WRITE,
-	//	&depthOptimizedClearValue,
-	//	IID_PPV_ARGS(m_pDepthStencilBuffer.GetAddressOf()));
+	HRESULT hr = m_pDevice->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&depthStencilDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		&depthOptimizedClearValue,
+		IID_PPV_ARGS(m_pDepthStencilBuffer.GetAddressOf()));
 
-	//if (FAILED(hr))
-	//	assert(nullptr);
+	if (FAILED(hr))
+		assert(nullptr);
 
 	//// 이거 안 넣었음 -> 왜지? nullptr 넣었던데 ...
 	//D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
@@ -281,7 +281,7 @@ void CDevice::CreateView()
 	//dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//dsvDesc.Texture2D.MipSlice = 0;
 
-	//m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), nullptr, DepthStencilView());
+	m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), nullptr, DepthStencilView());
 
 	////D3D12_RESOURCE_BARRIER barrier = {};
 	////barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -307,8 +307,6 @@ void CDevice::CreateView()
 	////FlushCommandQueue();
 	//// -> 이 부분 닫힌 명령 목룍 오류 뜸
 }
-
-
 
 D3D12_CPU_DESCRIPTOR_HANDLE CDevice::DepthStencilView() const
 {
@@ -402,6 +400,8 @@ void CDevice::CreateRootSignature()
 	/*D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pDummyCbvHeap->GetCPUDescriptorHandleForHeapStart();
 	m_pDevice->CreateConstantBufferView(&cbvDesc, handle);*/
+
+	// 초기화용 더미 디스크립터 힙 작성
 }
 
 void CDevice::CreateSamplerDesc()
@@ -440,13 +440,26 @@ void CDevice::CreateSamplerDesc()
 	m_vecSamplerDesc.push_back(sampler);
 }
 
+void CDevice::CreateConstBuffer(const wstring& _strName, size_t _iSize,
+	size_t _iMaxCount, CONST_REGISTER _eRegisterNum, bool _bGlobal)
+{
+	CConstantBuffer* pCB = new CConstantBuffer;
+	pCB->SetName(_strName);
+	pCB->Create((UINT)_iSize, (UINT)_iMaxCount, _eRegisterNum);
+	m_vecCB.push_back(pCB);
+	
+	if (_bGlobal)
+	{
+		//SetGlobalConstBufferToRegister(pCB, 0);
+	}
+}
+
 void CDevice::SetConstBufferToRegister(CConstantBuffer* _pCB, UINT _iOffset)
 {
 	UINT iDestRange = 1;
 	UINT iSrcRange = 1;
 
 	// 0번 슬롯이 상수 버퍼 데이터
-
 	D3D12_CPU_DESCRIPTOR_HANDLE hDummyHandle = m_vecDummyDescriptor[m_iCurDummyIdx]->GetCPUDescriptorHandleForHeapStart();
 	hDummyHandle.ptr += (UINT)_pCB->GetRegisterNum() * m_iCbvSrvUavDescriptorSize;
 
@@ -488,18 +501,3 @@ void CDevice::UpdateTable()
 
 
 
-
-void CDevice::CreateConstBuffer(const wstring& _strName, size_t _iSize,
-	size_t _iMaxCount, CONST_REGISTER _eRegisterNum, bool _bGlobal)
-{
-	CConstantBuffer* pCB = new CConstantBuffer;
-
-	pCB->Create((UINT)_iSize, (UINT)_iMaxCount, _eRegisterNum);
-	
-	if (m_vecCB.size() <= (UINT)_eRegisterNum)
-	{
-		m_vecCB.resize((UINT)_eRegisterNum + 1);
-	}
-
-	m_vecCB[(UINT)_eRegisterNum] = pCB;
-}

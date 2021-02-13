@@ -15,27 +15,6 @@ static type* GetInst()\
 #define DEVICE CDevice::GetInst()->GetDevice()
 #define CMDLIST CDevice::GetInst()->GetCmdList()
 
-
-
-
-enum class RES_TYPE
-{
-	MATERIAL,
-	MESH,
-	TEXTURE,
-	SOUND,
-	SHADER,
-	END,
-};
-
-
-enum class ROOT_SIG_TYPE
-{
-	INPUT_ASSEM,
-	CONST_BUFFER,
-	END,
-};
-
 enum class CONST_REGISTER
 {
 	b0 = 0,
@@ -64,6 +43,39 @@ enum class TEXTURE_REGISTER
 	t11,
 	t12,
 	END,
+};
+
+enum class RES_TYPE
+{
+	MATERIAL,
+	MESH,
+	TEXTURE,
+	SOUND,
+	SHADER,
+	END,
+};
+
+
+enum class ROOT_SIG_TYPE
+{
+	INPUT_ASSEM,
+	CONST_BUFFER,
+	END,
+};
+
+enum class COMPONENT_TYPE
+{
+	TRANSFORM,
+	MESHRENDER,
+	CAMERA,
+	COLLIDER2D,
+	COLLIDER3D,
+	ANIMATOR2D,
+	ANIMATOR3D,
+	LIGHT2D,
+	LIGHT3D,
+	END,
+	SCRIPT,
 };
 
 enum class RS_TYPE

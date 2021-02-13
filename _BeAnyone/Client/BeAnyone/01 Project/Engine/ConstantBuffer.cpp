@@ -11,6 +11,7 @@ CConstantBuffer::CConstantBuffer()
 	, m_eRegisterNum(CONST_REGISTER::END)
 	, m_pData(nullptr)
 	, m_tHeapDesc{}
+	, m_iCurCount(0)
 {
 }
 
@@ -20,7 +21,7 @@ CConstantBuffer::~CConstantBuffer()
 
 void CConstantBuffer::Create(UINT _iBufferSize, UINT _iMaxCount, CONST_REGISTER _eRegisterNum)
 {
-	m_iBufferSize = (_iBufferSize + 255) & ~255;
+	m_iBufferSize = (_iBufferSize + 255) & ~255;	// 버퍼 사이즈는 256 바이트 단위여야 한다.
 	m_iMaxCount = _iMaxCount;
 	m_eRegisterNum = _eRegisterNum;
 
@@ -80,4 +81,16 @@ void CConstantBuffer::Create(UINT _iBufferSize, UINT _iMaxCount, CONST_REGISTER 
 	// 21.02.01 A. 나중에 setdata 할 때 데이터 넣음 버퍼랑 맵핑되어 있는 pData에
 	D3D12_RANGE readRange{ 0, 0 };
 	m_pBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_pData));
+}
+
+UINT CConstantBuffer::AddData(void* _pSrc)
+{
+	// 지정한 크기의 상수버퍼를 넘어서게 데이터가 들어오는 경우
+	assert(!(m_iCurCount >= m_iMaxCount));
+
+	UINT iOffsetPos = m_iCurCount++;
+
+	memcpy(m_pData + (m_iBufferSize * iOffsetPos), _pSrc, m_iBufferSize);
+
+	return iOffsetPos;
 }

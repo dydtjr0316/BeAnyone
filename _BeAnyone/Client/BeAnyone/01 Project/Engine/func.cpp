@@ -14,11 +14,17 @@
 #include "shader.h"
 #include "ConstantBuffer.h"
 
+#include "GameObject.h"
+#include "Transform.h"
+#include "MeshRender.h"
+
 vector<VTX> g_vecVTX;
 vector<UINT> g_vecIDX;
 
 CMesh* g_pMesh = nullptr;
 CShader* g_pShader = nullptr;
+
+vector<CGameObject*> g_vecObj;
 
 void TestInit()
 {
@@ -27,7 +33,7 @@ void TestInit()
 
 	VTX v;
 
-	v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.2f);
+	/*v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.2f);
 	v.vColor = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
 	g_vecVTX.push_back(v);
 
@@ -75,10 +81,37 @@ void TestInit()
 	g_vecIDX.push_back(1); g_vecIDX.push_back(6); g_vecIDX.push_back(2);
 
 	g_vecIDX.push_back(4); g_vecIDX.push_back(0); g_vecIDX.push_back(3);
-	g_vecIDX.push_back(4); g_vecIDX.push_back(3); g_vecIDX.push_back(7);
+	g_vecIDX.push_back(4); g_vecIDX.push_back(3); g_vecIDX.push_back(7);*/
+
+	//-------------------------
+	
+	// 1. 입력 조립기 단계에 전달할, 정점 3개로 구성된 삼각형 1개
+	v.vPos = XMFLOAT3(-0.5f, 0.5f, 0.5f);
+	v.vColor = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
+	//v.vUV = Vec2(0.f, 0.f);
+	g_vecVTX.push_back(v);
+
+	v.vPos = XMFLOAT3(0.5f, 0.5f, 0.5f);
+	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+	//v.vUV = Vec2(1.f, 0.f);
+	g_vecVTX.push_back(v);
+
+	v.vPos = XMFLOAT3(0.5f, -0.5f, 0.5f);
+	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+	//v.vUV = Vec2(1.f, 1.f);
+	g_vecVTX.push_back(v);
+
+	v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.5f);
+	v.vColor = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
+	//.vUV = Vec2(0.f, 1.f);
+	g_vecVTX.push_back(v);
+	
+	g_vecIDX.push_back(0); g_vecIDX.push_back(1); g_vecIDX.push_back(2);
+	g_vecIDX.push_back(0); g_vecIDX.push_back(2); g_vecIDX.push_back(3);
 
 	g_pMesh->Create(sizeof(VTX), g_vecVTX.size(), (BYTE*)g_vecVTX.data()
 		, DXGI_FORMAT_R32_UINT, g_vecIDX.size(), (BYTE*)g_vecIDX.data());
+
 
 	// 쉐이더 생성
 	g_pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Test", "vs_5_1");
@@ -86,37 +119,76 @@ void TestInit()
 	g_pShader->Create();
 
 	CDevice::GetInst()->FlushCommandQueue();
+
+	//  GameObject 만들기
+	CGameObject* pObject = nullptr;
+	{
+		pObject = new CGameObject;
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+
+		pObject->MeshRender()->SetMesh(g_pMesh);
+		pObject->MeshRender()->SetShader(g_pShader);
+
+		g_vecObj.push_back(pObject);
+
+		/*pObject = new CGameObject;
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+
+		pObject->MeshRender()->SetMesh(g_pMesh);
+		pObject->MeshRender()->SetShader(g_pShader);
+
+		g_vecObj.push_back(pObject);*/
+	}
 }
 
 void TestUpdate()
 {
-
+	g_vecObj[0]->update();
+	g_vecObj[0]->lateupdate();
+	g_vecObj[0]->finalupdate();
 }
 
 void TestRender()
 {
+	//// 그리기 준비
+	//float arrColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	//CDevice::GetInst()->render_start(arrColor);
+
+	//g_pShader->UpdateData();
+
+	//XMFLOAT4 vData = XMFLOAT4{ 0.f, 0.f, 0.f, 0.f };
+
+	//CConstantBuffer* pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
+	//pCB->SetData(&vData, sizeof(XMFLOAT4), 0);
+	//CDevice::GetInst()->SetConstBufferToRegister(pCB, 0);
+
+	//g_pMesh->render();
+
+	///*vData = XMFLOAT4{ -0.5f, 0.f, 0.f, 0.f };
+
+	//pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
+	//pCB->SetData(&vData, sizeof(XMFLOAT4), 1);
+	//CDevice::GetInst()->SetConstBufferToRegister(pCB, 1);
+
+	//g_pMesh->render();*/
+
+	//// 그리기 종료
+	//CDevice::GetInst()->render_present();
+
+	// ----------------
+
 	// 그리기 준비
-	float arrColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float arrColor[4] = { 0.0f, 0.0f, 0.0f, 0.f };
 
 	CDevice::GetInst()->render_start(arrColor);
 
-	g_pShader->UpdateData();
-
-	XMFLOAT4 vData = XMFLOAT4{ 0.f, 0.f, 0.f, 0.f };
-
-	CConstantBuffer* pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
-	pCB->SetData(&vData, sizeof(XMFLOAT4), 0);
-	CDevice::GetInst()->SetConstBufferToRegister(pCB, 0);
-
-	g_pMesh->render();
-
-	/*vData = XMFLOAT4{ -0.5f, 0.f, 0.f, 0.f };
-
-	pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
-	pCB->SetData(&vData, sizeof(XMFLOAT4), 1);
-	CDevice::GetInst()->SetConstBufferToRegister(pCB, 1);
-
-	g_pMesh->render();*/
+	for (size_t i = 0; i < g_vecObj.size(); ++i)
+	{
+		g_vecObj[i]->render();
+	}
 
 	// 그리기 종료
 	CDevice::GetInst()->render_present();

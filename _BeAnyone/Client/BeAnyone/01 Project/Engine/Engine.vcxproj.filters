@@ -25,6 +25,12 @@
     <Filter Include="zBasic">
       <UniqueIdentifier>{e559ce56-8229-468b-bfe6-cb95a2f06ee6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. GameObject">
+      <UniqueIdentifier>{5f8000b1-aed3-41a8-b192-e5020df3a292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. GameObject\Component">
+      <UniqueIdentifier>{0118067e-2349-429c-b9b3-30cef68265a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -82,6 +88,21 @@
     <ClInclude Include="d3dx12.h">
       <Filter>01. Header</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>04. GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>04. GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>04. GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRender.h">
+      <Filter>04. GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Ptr.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -122,6 +143,18 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>04. GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>04. GameObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>04. GameObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRender.cpp">
+      <Filter>04. GameObject\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

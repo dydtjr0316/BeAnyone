@@ -13,6 +13,10 @@ public:
 	RES_TYPE GetType() { return m_eType; }
 
 public:
+	void AddRef() { m_iRefCount++; }
+	void SubRef() { m_iRefCount--; }
+
+public:
 	CResource(RES_TYPE e_Type);
 	virtual ~CResource();
 };
