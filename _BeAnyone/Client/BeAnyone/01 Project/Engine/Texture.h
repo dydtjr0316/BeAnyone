@@ -1,8 +1,12 @@
 #pragma once
 #include "Resource.h"
 
-//#include <DirectTex/DirectXTex.h>
-//#include <DirectTex/DirectXTex.inl>
+//#include "../../03 External/Include/DirectTex/DirectXTex.h"
+//#include "../../03 External/Include/DirectTex/DirectXTex.inl"
+
+#include <DirectTex/DirectXTex.h>
+#include <DirectTex/DirectXTex.inl>
+
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectTex\\DirectXTex_debug.lib")

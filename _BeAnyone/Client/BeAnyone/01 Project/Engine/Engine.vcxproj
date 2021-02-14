@@ -140,12 +140,17 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\03 External\Library\Engine</OutDir>
     <TargetName>$(ProjectName)_debug</TargetName>
+    <IncludePath>$(SolutionDir)03 External\Include\;$(IncludePath)</IncludePath>
+    <ReferencePath>$(SolutionDir)03 External\Library\;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)03 External\Library\Engine\</OutDir>
+    <IncludePath>$(SolutionDir)03 External\Include\;$(IncludePath)</IncludePath>
+    <ReferencePath>$(SolutionDir)03 External\Library\;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
