@@ -195,7 +195,7 @@ void CDevice::CreateSwapChain()
 	tDesc.BufferCount = SwapChainBufferCount;
 
 	tDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;		// 버퍼의 픽셀 포멧(픽셀당 4바이트)
-	tDesc.BufferDesc.Width = (UINT)m_tResolution.fWidth;			// 버퍼의 해상도(윈도우 해상도랑 일치시켜놓음)
+	tDesc.BufferDesc.Width = (UINT)m_tResolution.fWidth;		// 버퍼의 해상도(윈도우 해상도랑 일치시켜놓음)
 	tDesc.BufferDesc.Height = (UINT)m_tResolution.fHeight;		// 버퍼의 해상도(윈도우 해상도랑 일치시켜놓음)
 	tDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;	// 윈도우와 해상도 불일치시 화면 스케일링을 할것인지
 	tDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;		// 픽셀의 스캔라인 순서
