@@ -3,6 +3,7 @@
 #include "func.h"
 #include "KeyMgr.h"
 #include "PathMgr.h"
+#include "TimeMgr.h"
 
 // 물체 하나 그리기
 #include "Core.h"
@@ -119,7 +120,23 @@ void TestInit()
 
 void TestUpdate()
 {
+	g_vecObj[0]->update();
+	g_vecObj[0]->lateupdate();
+	g_vecObj[0]->finalupdate();
 
+	if (KEY_HOLD( KEY_TYPE::KEY_LEFT ))
+	{
+		Vec3 vPos = g_vecObj[0]->Transform()->GetLocalPos();
+		vPos.x -= DT * 1.f;
+		g_vecObj[0]->Transform()->SetLocalPos( vPos );
+	}
+
+	if (KEY_HOLD( KEY_TYPE::KEY_RIGHT ))
+	{
+		Vec3 vPos = g_vecObj[0]->Transform()->GetLocalPos();
+		vPos.x += DT * 1.f;
+		g_vecObj[0]->Transform()->SetLocalPos( vPos );
+	}
 }
 
 void TestRender()

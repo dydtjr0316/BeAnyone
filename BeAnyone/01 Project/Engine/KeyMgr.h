@@ -64,5 +64,9 @@ private:
 public:
 	void init();
 	void update();
+
+public:
+	KEY_STATE GetKeyState( KEY_TYPE _eKey ) { return m_vecKey[(UINT)_eKey].eState; }
+
 };
 

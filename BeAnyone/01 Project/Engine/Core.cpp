@@ -3,7 +3,7 @@
 
 #include "Device.h"
 #include "KeyMgr.h"
-// #include "TimeMgr.h"
+#include "TimeMgr.h"
 
 #include "PathMgr.h"
 
@@ -34,8 +34,8 @@ int CCore::init(HWND _hWnd, const tResolution& _resolution, bool _bWindow)
 
 	// 매니저 초기화
 	CPathMgr::init();
-	// CKeyMgr::GetInst()->init();
-	// CTimeMgr::GetInst()->init();
+	CKeyMgr::GetInst()->init();
+	CTimeMgr::GetInst()->init();
 
 	TestInit();
 
@@ -52,7 +52,8 @@ void CCore::ChangeWindowSize(HWND _hWnd, const tResolution& _resolution)
 
 void CCore::progress()
 {
-	// CKeyMgr::GetInst()->update();
+	CKeyMgr::GetInst()->update();
+	CTimeMgr::GetInst()->update();
 
 	update();
 	lateupdate();

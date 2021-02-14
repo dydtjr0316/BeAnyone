@@ -103,6 +103,9 @@
     <ClInclude Include="ptr.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="TimeMgr.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>04. GameObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeMgr.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

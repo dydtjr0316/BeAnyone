@@ -15,6 +15,14 @@ static type* GetInst()\
 #define DEVICE CDevice::GetInst()->GetDevice()
 #define CMDLIST CDevice::GetInst()->GetCmdList()
 
+#define KEY(Key, State) (CKeyMgr::GetInst()->GetKeyState(Key) == State)
+#define KEY_HOLD(Key) KEY(Key, KEY_STATE::STATE_HOLD)
+#define KEY_TAB(Key) KEY(Key, KEY_STATE::STATE_TAB)
+#define KEY_AWAY(Key) KEY(Key, KEY_STATE::STATE_AWAY)
+#define KEY_NONE(Key) KEY(Key, KEY_STATE::STATE_NONE)
+
+#define DT CTimeMgr::GetInst()->GetDeltaTime()
+
 typedef XMFLOAT4 Vec4;
 typedef XMFLOAT3 Vec3;
 typedef XMFLOAT2 Vec2;
