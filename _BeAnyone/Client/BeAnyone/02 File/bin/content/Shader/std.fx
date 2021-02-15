@@ -27,16 +27,24 @@ cbuffer GLOBAL_DATA : register(b5)
     float fHeight;
 };
 
+Texture2D g_tex_0 : register(t0);
+Texture2D g_tex_1 : register(t1);
+
+SamplerState g_sam_0 : register(s0);    // anisotrophic
+SamplerState g_sam_1 : register(s1);    // point
+
 struct VS_INPUT
 {
     float3 vPos : POSITION; // sementic (지시자) 정점 Layout 과 연동       
     float4 vColor : COLOR;
+    float2 vUV : TEXCOORD;
 };
 
 struct VS_OUTPUT
 {
     float4 vOutPos : SV_Position;
     float4 vOutColor : COLOR;
+    float2 vUV : TEXCOORD;
 };
 
 // ==================
@@ -50,6 +58,8 @@ VS_OUTPUT VS_Test(VS_INPUT _input)
     output.vOutPos.x += vOffset.x;
 
     output.vOutColor = _input.vColor;
+    
+    output.vUV = _input.vUV;
 
     return output;
 }
@@ -68,6 +78,7 @@ float4 PS_Test(VS_OUTPUT _input) : SV_Target
 {
     float fRatio = _input.vOutPos.x / 1280.f;
 
-//return float4(0.f, 0.f, 1.f * fRatio, 1.f);
-return _input.vOutColor;
+    float4 vOutColor = g_tex_1.Sample(g_sam_0, _input.vUV);
+
+    return vOutColor;
 }

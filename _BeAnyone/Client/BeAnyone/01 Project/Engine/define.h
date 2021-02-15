@@ -14,6 +14,7 @@ static type* GetInst()\
 
 #define DEVICE CDevice::GetInst()->GetDevice()
 #define CMDLIST CDevice::GetInst()->GetCmdList()
+#define CMDLIST_RES CDevice::GetInst()->GetCmdListRes()
 
 enum class CONST_REGISTER
 {

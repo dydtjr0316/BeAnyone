@@ -12,6 +12,7 @@
 
 #include "Mesh.h"
 #include "shader.h"
+#include "Texture.h"
 #include "ConstantBuffer.h"
 
 #include "GameObject.h"
@@ -23,6 +24,7 @@ vector<UINT> g_vecIDX;
 
 CMesh* g_pMesh = nullptr;
 CShader* g_pShader = nullptr;
+CTexture* g_pTexture = nullptr;
 
 vector<CGameObject*> g_vecObj;
 
@@ -88,22 +90,22 @@ void TestInit()
 	// 1. 입력 조립기 단계에 전달할, 정점 3개로 구성된 삼각형 1개
 	v.vPos = XMFLOAT3(-0.5f, 0.5f, 0.5f);
 	v.vColor = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
-	//v.vUV = Vec2(0.f, 0.f);
+	v.vUV = XMFLOAT2(0.f, 0.f);
 	g_vecVTX.push_back(v);
 
 	v.vPos = XMFLOAT3(0.5f, 0.5f, 0.5f);
 	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
-	//v.vUV = Vec2(1.f, 0.f);
+	v.vUV = XMFLOAT2(1.f, 0.f);
 	g_vecVTX.push_back(v);
 
 	v.vPos = XMFLOAT3(0.5f, -0.5f, 0.5f);
 	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
-	//v.vUV = Vec2(1.f, 1.f);
+	v.vUV = XMFLOAT2(1.f, 1.f);
 	g_vecVTX.push_back(v);
 
 	v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.5f);
 	v.vColor = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
-	//.vUV = Vec2(0.f, 1.f);
+	v.vUV = XMFLOAT2(0.f, 1.f);
 	g_vecVTX.push_back(v);
 	
 	g_vecIDX.push_back(0); g_vecIDX.push_back(1); g_vecIDX.push_back(2);
@@ -117,6 +119,13 @@ void TestInit()
 	g_pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Test", "vs_5_1");
 	g_pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Test", "ps_5_1");
 	g_pShader->Create();
+
+	// Texture 로드
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += L"Texture\\cookie.png";
+
+	g_pTexture = new CTexture;
+	g_pTexture->Load(strPath);
 
 	CDevice::GetInst()->FlushCommandQueue();
 
@@ -185,6 +194,7 @@ void TestRender()
 
 	CDevice::GetInst()->render_start(arrColor);
 
+	CDevice::GetInst()->SetTextureToRegister(g_pTexture, TEXTURE_REGISTER::t0);
 	for (size_t i = 0; i < g_vecObj.size(); ++i)
 	{
 		g_vecObj[i]->render();

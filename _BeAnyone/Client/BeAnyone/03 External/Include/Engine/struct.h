@@ -11,6 +11,7 @@ struct VTX
 {
 	XMFLOAT3 vPos;
 	XMFLOAT4 vColor;
+	XMFLOAT2 vUV;
 };
 
 struct tTransform

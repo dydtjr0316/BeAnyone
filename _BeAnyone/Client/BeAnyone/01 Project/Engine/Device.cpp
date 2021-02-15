@@ -397,10 +397,6 @@ void CDevice::CreateRootSignature()
 		m_vecDummyDescriptor.push_back(pDummyDescriptor);
 	}
 
-	/*D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pDummyCbvHeap->GetCPUDescriptorHandleForHeapStart();
-	m_pDevice->CreateConstantBufferView(&cbvDesc, handle);*/
-
 	// 초기화용 더미 디스크립터 힙 작성
 }
 
@@ -499,5 +495,20 @@ void CDevice::UpdateTable()
 	++m_iCurDummyIdx;
 }
 
+void CDevice::ExcuteResourceLoad()
+{
+	// 리소스 로딩 명령 닫기
+	m_pCommandListRes->Close();
+
+	// 커맨드 리스트 수행
+	ID3D12CommandList* ppCommandLists[] = { m_pCommandListRes.Get() };
+	m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+	FlushCommandQueue();
+
+	// 다시 활성화
+	m_pCmdListAllocRes->Reset();
+	m_pCommandListRes->Reset(m_pCmdListAllocRes.Get(), nullptr);
+}
 
 

@@ -19,7 +19,7 @@ class CTexture :
 	public CResource
 {
 private:
-	//ScratchImage			 	 m_Image;
+	ScratchImage			 	 m_Image;
 	ComPtr<ID3D12Resource>		 m_pTex2D;
 	ComPtr<ID3D12DescriptorHeap> m_pSRV;
 
@@ -32,8 +32,8 @@ public:
 
 	ComPtr<ID3D12DescriptorHeap> GetSRV() { return m_pSRV; }
 
-	//float Width() { return (float)m_Image.GetMetadata().width; }
-	//float Height() { return (float)m_Image.GetMetadata().height; }
+	float Width() { return (float)m_Image.GetMetadata().width; }
+	float Height() { return (float)m_Image.GetMetadata().height; }
 
 public:
 	CTexture();
