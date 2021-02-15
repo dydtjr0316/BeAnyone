@@ -1,5 +1,5 @@
 /.vs
-/simplegame/x64
+/x64
 *.exe
 *.ilk
 *.pbd
@@ -15,3 +15,8 @@
 *.ipch
 *.res
 *.user
+_BeAnyone/Client/BeAnyone/01 Project/Engine/x64/Debug/Engine_debug.lib.recipe
+*.pdb
+_BeAnyone/Client/BeAnyone/01 Project/Client/x64/Debug/*.pdb
+_BeAnyone/Client/BeAnyone/01 Project/Client/x64/Debug/Client.vcxproj.FileListAbsolute.txt
+_BeAnyone/Client/BeAnyone/01 Project/Engine/x64/Debug/Engine.vcxproj.FileListAbsolute.txt
