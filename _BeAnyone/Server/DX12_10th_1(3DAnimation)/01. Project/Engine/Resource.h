@@ -42,25 +42,3 @@ public:
 	template<typename T>
 	friend class Ptr;
 };
-
-
-template<typename T>
-inline bool CResource::LoadFromScene(FILE * _pFile)
-{
-	// key
-	wstring strName = LoadWString(_pFile);
-
-	// path
-	m_strPath = LoadWString(_pFile);
-
-	// 리소스가 이미 로딩되어있는지 체크
-	Ptr<T> pRes = CResMgr::GetInst()->FindRes<T>(strName);
-	if (nullptr != pRes) // 이미 로딩되어있다.
-		return false;
-
-	SetName(strName);
-
-	wstring strPath = CPathMgr::GetResPath();
-	strPath += m_strPath;
-	Load(strPath);
-}

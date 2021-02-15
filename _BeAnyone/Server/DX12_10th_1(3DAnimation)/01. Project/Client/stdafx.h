@@ -32,9 +32,9 @@ using namespace chrono;
 #include <memory.h>
 #include <tchar.h>
 
-#include "../../../../3d 연습/Server/Server/Protocol.h"
-#include "../../../../3d 연습/Server/Server/Enum.h"
-#include "../../../../3d 연습/Server/Server/Struct.h"
+#include "../../../../Server/Server/Server/Protocol.h"
+#include "../../../../Server/Server/Server/Enum.h"
+#include "../../../../Server/Server/Server/Struct.h"
 #include "Extern.h"
 
 

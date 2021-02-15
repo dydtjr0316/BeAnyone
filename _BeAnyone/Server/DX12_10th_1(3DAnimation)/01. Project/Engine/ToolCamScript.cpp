@@ -34,11 +34,11 @@ void CToolCamScript::update()
 		if (A_KEY_HOLD)
 		{
 			// 대각선으로 움직이는 코드 
-			netMgr.Send_Move_Packet(MV_LEFT_UP);
+			//netMgr.Send_Move_Packet(MV_LEFT_UP);
 		}
 		else if (D_KEY_HOLD)
 		{
-			netMgr.Send_Move_Packet(MV_RIGHT_UP);
+			//netMgr.Send_Move_Packet(MV_RIGHT_UP);
 		}
 		else
 		{

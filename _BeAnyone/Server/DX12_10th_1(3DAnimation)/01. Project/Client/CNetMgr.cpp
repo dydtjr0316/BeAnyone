@@ -157,7 +157,7 @@ void CNetMgr::Process_Data(char* net_buf,  size_t& io_byte)
 	char* ptr = net_buf;
 	static size_t in_packet_size = 0;
 	static size_t saved_packet_size = 0;
-	static char packet_buffer[BUF_SIZE];
+	static char packet_buffer[MAX_BUF_SIZE];
 
 	while (0 != io_byte) {
 		if (0 == in_packet_size) in_packet_size = ptr[0];
