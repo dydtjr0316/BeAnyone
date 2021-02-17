@@ -60,9 +60,16 @@ class CKeyMgr
 	SINGLE(CKeyMgr);
 private:
 	vector<tKeyState>	m_vecKey;
+	POINT				m_ptMouse;
+	POINT				m_ptOldMouse;
 
 public:
 	void init();
 	void update();
-};
 
+public:
+	KEY_STATE GetKeyState(KEY_TYPE _eKey) { return m_vecKey[(UINT)_eKey].eState; }
+	const POINT& GetMousePos() { return m_ptMouse; }
+	const POINT& GetPreMousePos() { return m_ptOldMouse; }
+
+};

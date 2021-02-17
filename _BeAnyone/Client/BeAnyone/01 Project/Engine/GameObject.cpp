@@ -40,7 +40,8 @@ void CGameObject::update()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
-		m_arrCom[i]->update();
+		if (nullptr != m_arrCom[i])
+			m_arrCom[i]->update();
 	}
 }
 
@@ -48,7 +49,8 @@ void CGameObject::lateupdate()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
-		m_arrCom[i]->lateupdate();
+		if (nullptr != m_arrCom[i])
+			m_arrCom[i]->lateupdate();
 	}
 }
 
@@ -56,7 +58,8 @@ void CGameObject::finalupdate()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
-		m_arrCom[i]->finalupdate();
+		if (nullptr != m_arrCom[i])
+			m_arrCom[i]->finalupdate();
 	}
 }
 

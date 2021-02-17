@@ -63,26 +63,28 @@ enum class ROOT_SIG_TYPE
 	END,
 };
 
-enum class COMPONENT_TYPE
-{
-	TRANSFORM,
-	MESHRENDER,
-	//CAMERA,
-	//COLLIDER2D,
-	//COLLIDER3D,
-	//ANIMATOR2D,
-	//ANIMATOR3D,
-	//LIGHT2D,
-	//LIGHT3D,
-	END,
-	//SCRIPT,
-};
-
 enum class RS_TYPE
 {
 	DEFAULT,
 	END,
 };
+
+enum class COMPONENT_TYPE
+{
+	TRANSFORM,
+	MESHRENDER,
+	CAMERA,
+	COLLIDER2D,
+	COLLIDER3D,
+	ANIMATOR2D,
+	ANIMATOR3D,
+	LIGHT2D,
+	LIGHT3D,
+	END,
+	SCRIPT,
+};
+
+
 
 enum class BLEND_TYPE
 {
@@ -93,3 +95,11 @@ enum class BLEND_TYPE
 // State Description
 extern D3D12_RASTERIZER_DESC g_arrRSDesc[(UINT)RS_TYPE::END];
 extern D3D12_BLEND_DESC g_arrBlendDesc[(UINT)BLEND_TYPE::END];
+
+enum class DIR_TYPE
+{
+	RIGHT,
+	UP,
+	FRONT,
+	END,
+};
