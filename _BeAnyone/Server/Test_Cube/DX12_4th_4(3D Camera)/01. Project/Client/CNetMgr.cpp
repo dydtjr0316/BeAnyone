@@ -123,13 +123,9 @@ void CNetMgr::ProcessPacket(char* ptr)
 	{
 		sc_packet_move* packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int other_id = packet->id;
-		/*m_Pos.x = packet->x;
-		m_Pos.y = packet->y;
-		m_Pos.z = packet->z;
-
-		cout << m_Pos.x << endl;
-		cout << m_Pos.y << endl;
-		cout << m_Pos.z << endl;*/
+		cout << packet->x << endl;
+		cout << packet->y << endl;
+		cout << packet->z << endl;
 	}
 	break;
 	case SC_PACKET_LEAVE:

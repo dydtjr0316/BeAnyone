@@ -4,6 +4,7 @@
 #include "BulletScript.h"
 #include "TestScript.h"
 
+
 CPlayerScript::CPlayerScript()
 	: CScript((UINT)SCRIPT_TYPE::PLAYERSCRIPT)
 	, m_pOriginMtrl(nullptr)
@@ -34,21 +35,25 @@ void CPlayerScript::update()
 	if (KEY_HOLD(KEY_TYPE::KEY_W))
 	{
 		vPos.z += DT * 200.f;
+		netMgr.Send_Move_Packet(MV_UP);
 	}
 
 	if (KEY_HOLD(KEY_TYPE::KEY_S))
 	{
 		vPos.z -= DT * 200.f;
+		netMgr.Send_Move_Packet(MV_DOWN);
 	}
 
 	if (KEY_HOLD(KEY_TYPE::KEY_A))
 	{	
 		vPos.x -= DT * 200.f;
+		netMgr.Send_Move_Packet(MV_LEFT);
 	}
 
 	if (KEY_HOLD(KEY_TYPE::KEY_D))
 	{
 		vPos.x += DT * 200.f;
+		netMgr.Send_Move_Packet(MV_RIGHT);
 	}
 
 	// z 키를 누르면 z 축 회전

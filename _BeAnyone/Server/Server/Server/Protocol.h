@@ -93,7 +93,7 @@ struct sc_packet_move {
 	char size;
 	char type;
 	int id;
-	int x, y, z;
+	float x, y, z;
 	int move_time;
 };
 

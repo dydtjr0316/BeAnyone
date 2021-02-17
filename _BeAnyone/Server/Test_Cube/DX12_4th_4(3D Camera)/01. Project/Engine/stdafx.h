@@ -15,3 +15,7 @@
 #include <Windows.h>
 
 #include "global.h"
+
+
+// 용석
+#include "../Client/Extern.h"

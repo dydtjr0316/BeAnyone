@@ -133,7 +133,7 @@ void TestUpdate()
 	}
 
 
-	//용석
+	// 효림 물어보기
 	if (KEY_HOLD(KEY_TYPE::KEY_LEFT))
 	{
 		Vec3 vPos = g_vecObj[0]->Transform()->GetLocalPos();

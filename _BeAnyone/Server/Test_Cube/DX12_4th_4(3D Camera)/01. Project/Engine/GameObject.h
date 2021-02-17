@@ -31,7 +31,7 @@ public:
 	void update();
 	void lateupdate();
 	void finalupdate();
-	void enable();
+	void enable();                                                           
 	void disable();
 
 public:
