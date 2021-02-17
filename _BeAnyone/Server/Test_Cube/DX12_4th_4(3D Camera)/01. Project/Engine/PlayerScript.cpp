@@ -29,6 +29,8 @@ void CPlayerScript::update()
 	Vec3 vPos = Transform()->GetLocalPos();
 	Vec3 vRot = Transform()->GetLocalRot();
 
+	// 이동 용석
+
 	if (KEY_HOLD(KEY_TYPE::KEY_W))
 	{
 		vPos.z += DT * 200.f;

@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "main.h"
+#include "CNetMgr.h"
 
 #include <Engine/global.h>
 #include <Engine/core.h>
@@ -13,8 +14,12 @@
 #pragma comment(lib, "Engine/Engine.lib")
 #endif
 
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
+SOCKET g_Socket;
+char name[10];
 #define MAX_LOADSTRING 100
+CNetMgr netMgr;
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -40,6 +45,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CLIENT, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
+
+    netMgr.Connect();
+    netMgr.Send_LogIN_Packet();
 
     // 응용 프로그램 초기화를 수행합니다:
     if (!InitInstance (hInstance, nCmdShow))
