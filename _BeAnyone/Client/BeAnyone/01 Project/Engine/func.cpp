@@ -137,7 +137,7 @@ void TestInit()
 		pObject->AddComponent(new CMeshRender);
 
 		pObject->MeshRender()->SetMesh(g_pMesh);
-		pObject->MeshRender()->SetShader(g_pShader);
+		//pObject->MeshRender()->SetShader(g_pShader);
 
 		g_vecObj.push_back(pObject);
 
@@ -331,4 +331,23 @@ int GetSizeofFormat(DXGI_FORMAT _eFormat)
 	}
 
 	return iRetByte / 8;
+}
+
+void SaveWString(FILE* _pFile, const wstring& _str)
+{
+	BYTE c = (BYTE)_str.length();
+	fwrite(&c, 1, 1, _pFile);
+	fwrite(_str.c_str(), 2, c, _pFile);
+}
+
+wchar_t* LoadWString(FILE* _pFile)
+{
+	static wchar_t szStr[255] = {};
+
+	BYTE c = 0;
+	fread(&c, 1, 1, _pFile);
+	fread(szStr, 2, c, _pFile);
+	szStr[c] = 0;
+
+	return szStr;
 }

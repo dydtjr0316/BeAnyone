@@ -10,6 +10,9 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 
+#include <algorithm>
+#include "SimpleMath.h"
+
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")

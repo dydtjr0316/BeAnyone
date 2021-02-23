@@ -9,8 +9,8 @@ class CComponent :
 private:
 	CGameObject*		m_pObject;
 	COMPONENT_TYPE		m_eComType;
-	//bool				m_bChange;
-	//bool				m_bActive;
+	bool				m_bChange;
+	bool				m_bActive;
 
 public:
 	virtual void awake() {};
@@ -19,15 +19,15 @@ public:
 	virtual void lateupdate() {};
 	virtual void finalupdate() {};
 
-	//virtual void enable() {};
-	//virtual void disable() {};
-	//
-	//virtual void SaveToScene(FILE* _pFile) = 0;
-	//virtual void LoadFromScene(FILE* _pFile) = 0;
+	virtual void enable() {};
+	virtual void disable() {};
+	
+	virtual void SaveToScene(FILE* _pFile) = 0;
+	virtual void LoadFromScene(FILE* _pFile) = 0;
 
-//public:
-//	void SetActive(bool _bTrue);
-//	bool IsActive() { return m_bActive; }
+public:
+	void SetActive(bool _bTrue);
+	bool IsActive() { return m_bActive; }
 
 public:
 	COMPONENT_TYPE GetComponentType() { return m_eComType; }
@@ -39,24 +39,22 @@ public:
 	//CCollider2D* Collider2D() { return m_pObject->Collider2D(); }
 	//CLight2D* Light2D() { return m_pObject->Light2D(); }
 	//CLight3D* Light3D() { return m_pObject->Light3D(); }
-	//CCamera* Camera() { return m_pObject->Camera(); }
+	CCamera* Camera() { return m_pObject->Camera(); }
 
 private:
 	void SetGameObject(CGameObject* _pObject) { m_pObject = _pObject; }
 
-//protected:
-//	void Changed() { m_bChange = true; }
-
-//public:
-//	bool IsChanged() { return m_bChange; }
-//
-//public:
-//	virtual CComponent* Clone() = 0;
+protected:
+	void Changed() { m_bChange = true; }
 
 public:
-	CComponent(COMPONENT_TYPE _eType)
-		: m_eComType(_eType)
-	{}
+	bool IsChanged() { return m_bChange; }
+
+public:
+	virtual CComponent* Clone() = 0;
+
+public:
+	CComponent(COMPONENT_TYPE _eType);
 	virtual ~CComponent();
 
 	friend class CGameObject;

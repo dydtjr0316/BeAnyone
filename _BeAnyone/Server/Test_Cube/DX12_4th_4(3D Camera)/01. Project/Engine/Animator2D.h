@@ -20,7 +20,9 @@ public:
 	virtual void finalupdate();
 
 public:
-	bool AddAnimation(const wstring& _strAnimKey, Ptr<CTexture> _pTex, Vec2 _vLT, Vec2 _vGap, int _iFrmCount, float _fDuration);
+	bool AddAnimation(const wstring& _strAnim
+		
+		, Ptr<CTexture> _pTex, Vec2 _vLT, Vec2 _vGap, int _iFrmCount, float _fDuration);
 	void PlayAnimation(const wstring& _strAnimKey, bool _bRepeat);
 	void PlayAnimation() { if(nullptr != m_pCurAnim) m_bPlay = true; }
 	void PauseAnimation() { m_bPlay = false; }

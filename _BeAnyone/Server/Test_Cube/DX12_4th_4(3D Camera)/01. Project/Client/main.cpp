@@ -13,6 +13,7 @@
 #pragma comment(lib, "Engine/Engine.lib")
 #endif
 
+Vec3 t;
 
 #define MAX_LOADSTRING 100
 

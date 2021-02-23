@@ -31,6 +31,15 @@
     <Filter Include="04. GameObject\Component">
       <UniqueIdentifier>{0118067e-2349-429c-b9b3-30cef68265a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\SceneMgr">
+      <UniqueIdentifier>{ac97bbfd-6e56-4e94-9f6a-5cb23bdead17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{b1ac74c8-9be7-4ccf-8e03-54d2810b0248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. GameObject\Component\Camera">
+      <UniqueIdentifier>{12f79666-406d-4364-88e9-88d94d905bbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -103,6 +112,30 @@
     <ClInclude Include="Ptr.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>0. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Manager\SceneMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Manager\SceneMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>Manager\SceneMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ResMgr.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMgr.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>04. GameObject\Component\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -156,6 +189,33 @@
     <ClCompile Include="MeshRender.cpp">
       <Filter>04. GameObject\Component</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleMath.cpp">
+      <Filter>0. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Manager\SceneMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Manager\SceneMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>Manager\SceneMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ResMgr.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderMgr.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderMgrInit.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>04. GameObject\Component\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />
@@ -164,5 +224,10 @@
     <FxCompile Include="std.fx">
       <Filter>ShaderCode</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleMath.inl">
+      <Filter>0. Default</Filter>
+    </None>
   </ItemGroup>
 </Project>
