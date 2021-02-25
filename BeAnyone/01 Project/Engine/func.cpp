@@ -10,173 +10,194 @@
 #include "Device.h"
 
 #include "Mesh.h"
-#include "shader.h"
-#include "ConstantBuffer.h"
-#include "Texture.h"
+#include "pch.h"
+#include "SceneMgr.h"
 
+#include "Scene.h"
+#include "Layer.h"
 #include "GameObject.h"
-#include "MeshRenderer.h"
+
+#include "ResMgr.h"
+#include "Shader.h"
+#include "Mesh.h"
+#include "Texture.h"
 #include "Transform.h"
 
+#include "TimeMgr.h"
+#include "KeyMgr.h"
+#include "Camera.h"
 
+#include "Device.h"
+#include "Core.h"
+
+#include "MeshRenderer.h"
+#include "ToolCamScript.h"
+#include "RenderMgr.h"
 vector<VTX> g_vecVTX;
 vector<UINT> g_vecIDX;	
 
 CMesh* g_pMesh = nullptr;
+
 CShader* g_pShader = nullptr;
+
 CTexture* g_pTexture = nullptr;
 
+CMaterial* g_pMtrl_0 = nullptr;
+CMaterial* g_pMtrl_1 = nullptr;
+
+CTexture* g_pTex = nullptr;
+
 vector<CGameObject*> g_vecObj;
-
-void TestInit()
-{
-	g_pMesh = new CMesh;
-	g_pShader = new CShader;
-
-	VTX v;
-
-	v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.2f);
-	v.vColor = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	v.vPos = XMFLOAT3(-0.5f, 0.5f, 0.2f);
-	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	v.vPos = XMFLOAT3(0.5f, 0.5f, 0.2f);
-	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	v.vPos = XMFLOAT3(0.5f, -0.5f, 0.2f);
-	v.vColor = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.5f);
-	v.vColor = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	v.vPos = XMFLOAT3(-0.5f, 0.5f, 0.5f);
-	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	v.vPos = XMFLOAT3(0.5f, 0.5f, 0.5f);
-	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	v.vPos = XMFLOAT3(0.5f, -0.5f, 0.5f);
-	v.vColor = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
-	g_vecVTX.push_back(v);
-
-	g_vecIDX.push_back(0); g_vecIDX.push_back(1); g_vecIDX.push_back(2);
-	g_vecIDX.push_back(0); g_vecIDX.push_back(2); g_vecIDX.push_back(3);
-
-	g_vecIDX.push_back(4); g_vecIDX.push_back(6); g_vecIDX.push_back(5);
-	g_vecIDX.push_back(4); g_vecIDX.push_back(7); g_vecIDX.push_back(6);
-
-	g_vecIDX.push_back(4); g_vecIDX.push_back(5); g_vecIDX.push_back(1);
-	g_vecIDX.push_back(4); g_vecIDX.push_back(1); g_vecIDX.push_back(0);
-
-	g_vecIDX.push_back(3); g_vecIDX.push_back(2); g_vecIDX.push_back(6);
-	g_vecIDX.push_back(3); g_vecIDX.push_back(6); g_vecIDX.push_back(7);
-
-	g_vecIDX.push_back(1); g_vecIDX.push_back(5); g_vecIDX.push_back(6);
-	g_vecIDX.push_back(1); g_vecIDX.push_back(6); g_vecIDX.push_back(2);
-
-	g_vecIDX.push_back(4); g_vecIDX.push_back(0); g_vecIDX.push_back(3);
-	g_vecIDX.push_back(4); g_vecIDX.push_back(3); g_vecIDX.push_back(7);
-
-	g_pMesh->Create(sizeof(VTX), g_vecVTX.size(), (BYTE*)g_vecVTX.data()
-		, DXGI_FORMAT_R32_UINT, g_vecIDX.size(), (BYTE*)g_vecIDX.data());
-
-	// 쉐이더 생성
-	g_pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Test", "vs_5_1");
-	g_pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Test", "ps_5_1");
-	g_pShader->Create();
-
-	CDevice::GetInst()->FlushCommandQueue();
-
-	// GameObject 만들기
-	CGameObject* pObject = nullptr;
-	{
-		pObject = new CGameObject;
-		pObject->AddComponent( new CTransform );
-		pObject->AddComponent( new CMeshRender );
-
-		pObject->MeshRender()->SetMesh( g_pMesh );
-		pObject->MeshRender()->SetShader( g_pShader );
-
-		g_vecObj.push_back( pObject );
-
-		/*pObject = new CGameObject;
-		pObject->AddComponent(new CTransform);
-		pObject->AddComponent(new CMeshRender);
-
-		pObject->MeshRender()->SetMesh(g_pMesh);
-		pObject->MeshRender()->SetShader(g_pShader);
-
-		g_vecObj.push_back(pObject);*/
-	}
-}
-
-void TestUpdate()
-{
-	g_vecObj[0]->update();
-	g_vecObj[0]->lateupdate();
-	g_vecObj[0]->finalupdate();
-
-	if (KEY_HOLD( KEY_TYPE::KEY_LEFT ))
-	{
-		Vec3 vPos = g_vecObj[0]->Transform()->GetLocalPos();
-		vPos.x -= DT * 1.f;
-		g_vecObj[0]->Transform()->SetLocalPos( vPos );
-	}
-
-	if (KEY_HOLD( KEY_TYPE::KEY_RIGHT ))
-	{
-		Vec3 vPos = g_vecObj[0]->Transform()->GetLocalPos();
-		vPos.x += DT * 1.f;
-		g_vecObj[0]->Transform()->SetLocalPos( vPos );
-	}
-}
-
-void TestRender()
-{
-	// 그리기 준비
-	float arrColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-	CDevice::GetInst()->render_start(arrColor);
-	for (size_t i = 0; i < g_vecObj.size(); ++i)
-	{
-		g_vecObj[i]->render();
-	}
-
-	/*g_pShader->UpdateData();
-
-	XMFLOAT4 vData = XMFLOAT4{ 0.f, 0.f, 0.f, 0.f };
-
-	CConstantBuffer* pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
-	pCB->SetData(&vData, sizeof(XMFLOAT4), 0);	
-	CDevice::GetInst()->SetConstBufferToRegister(pCB, 0);
-
-	g_pMesh->render();*/
-
-	/*vData = XMFLOAT4{ -0.5f, 0.f, 0.f, 0.f };
-
-	pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
-	pCB->SetData(&vData, sizeof(XMFLOAT4), 1);
-	CDevice::GetInst()->SetConstBufferToRegister(pCB, 1);	
-
-	g_pMesh->render();*/
-
-	// 그리기 종료
-	CDevice::GetInst()->render_present();
-}
-
-void TestRelease()
-{
-	SAFE_DELETE(g_pMesh);
-	SAFE_DELETE(g_pShader);
-}
+//
+//void TestInit()
+//{
+//	g_pMesh = new CMesh;
+//	g_pShader = new CShader;
+//
+//	VTX v;
+//
+//	v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.2f);
+//	v.vColor = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	v.vPos = XMFLOAT3(-0.5f, 0.5f, 0.2f);
+//	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	v.vPos = XMFLOAT3(0.5f, 0.5f, 0.2f);
+//	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	v.vPos = XMFLOAT3(0.5f, -0.5f, 0.2f);
+//	v.vColor = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	v.vPos = XMFLOAT3(-0.5f, -0.5f, 0.5f);
+//	v.vColor = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	v.vPos = XMFLOAT3(-0.5f, 0.5f, 0.5f);
+//	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	v.vPos = XMFLOAT3(0.5f, 0.5f, 0.5f);
+//	v.vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	v.vPos = XMFLOAT3(0.5f, -0.5f, 0.5f);
+//	v.vColor = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
+//	g_vecVTX.push_back(v);
+//
+//	g_vecIDX.push_back(0); g_vecIDX.push_back(1); g_vecIDX.push_back(2);
+//	g_vecIDX.push_back(0); g_vecIDX.push_back(2); g_vecIDX.push_back(3);
+//
+//	g_vecIDX.push_back(4); g_vecIDX.push_back(6); g_vecIDX.push_back(5);
+//	g_vecIDX.push_back(4); g_vecIDX.push_back(7); g_vecIDX.push_back(6);
+//
+//	g_vecIDX.push_back(4); g_vecIDX.push_back(5); g_vecIDX.push_back(1);
+//	g_vecIDX.push_back(4); g_vecIDX.push_back(1); g_vecIDX.push_back(0);
+//
+//	g_vecIDX.push_back(3); g_vecIDX.push_back(2); g_vecIDX.push_back(6);
+//	g_vecIDX.push_back(3); g_vecIDX.push_back(6); g_vecIDX.push_back(7);
+//
+//	g_vecIDX.push_back(1); g_vecIDX.push_back(5); g_vecIDX.push_back(6);
+//	g_vecIDX.push_back(1); g_vecIDX.push_back(6); g_vecIDX.push_back(2);
+//
+//	g_vecIDX.push_back(4); g_vecIDX.push_back(0); g_vecIDX.push_back(3);
+//	g_vecIDX.push_back(4); g_vecIDX.push_back(3); g_vecIDX.push_back(7);
+//
+//	g_pMesh->Create(sizeof(VTX), g_vecVTX.size(), (BYTE*)g_vecVTX.data()
+//		, DXGI_FORMAT_R32_UINT, g_vecIDX.size(), (BYTE*)g_vecIDX.data());
+//
+//	// 쉐이더 생성
+//	g_pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Test", "vs_5_1");
+//	g_pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Test", "ps_5_1");
+//	g_pShader->Create();
+//
+//	CDevice::GetInst()->FlushCommandQueue();
+//
+//	// GameObject 만들기
+//	CGameObject* pObject = nullptr;
+//	{
+//		pObject = new CGameObject;
+//		pObject->AddComponent( new CTransform );
+//		pObject->AddComponent( new CMeshRender );
+//
+//		pObject->MeshRender()->SetMesh( g_pMesh );
+//		pObject->MeshRender()->SetMaterial( g_pShader );
+//		
+//		g_vecObj.push_back( pObject );
+//
+//		/*pObject = new CGameObject;
+//		pObject->AddComponent(new CTransform);
+//		pObject->AddComponent(new CMeshRender);
+//
+//		pObject->MeshRender()->SetMesh(g_pMesh);
+//		pObject->MeshRender()->SetShader(g_pShader);
+//
+//		g_vecObj.push_back(pObject);*/
+//	}
+//}
+//
+//void TestUpdate()
+//{
+//	g_vecObj[0]->update();
+//	g_vecObj[0]->lateupdate();
+//	g_vecObj[0]->finalupdate();
+//
+//	if (KEY_HOLD( KEY_TYPE::KEY_LEFT ))
+//	{
+//		Vec3 vPos = g_vecObj[0]->Transform()->GetLocalPos();
+//		vPos.x -= DT * 1.f;
+//		g_vecObj[0]->Transform()->SetLocalPos( vPos );
+//	}
+//
+//	if (KEY_HOLD( KEY_TYPE::KEY_RIGHT ))
+//	{
+//		Vec3 vPos = g_vecObj[0]->Transform()->GetLocalPos();
+//		vPos.x += DT * 1.f;
+//		g_vecObj[0]->Transform()->SetLocalPos( vPos );
+//	}
+//}
+//
+//void TestRender()
+//{
+//	// 그리기 준비
+//	float arrColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//
+//	CDevice::GetInst()->render_start(arrColor);
+//	for (size_t i = 0; i < g_vecObj.size(); ++i)
+//	{
+//		g_vecObj[i]->render();
+//	}
+//
+//	/*g_pShader->UpdateData();
+//
+//	XMFLOAT4 vData = XMFLOAT4{ 0.f, 0.f, 0.f, 0.f };
+//
+//	CConstantBuffer* pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
+//	pCB->SetData(&vData, sizeof(XMFLOAT4), 0);	
+//	CDevice::GetInst()->SetConstBufferToRegister(pCB, 0);
+//
+//	g_pMesh->render();*/
+//
+//	/*vData = XMFLOAT4{ -0.5f, 0.f, 0.f, 0.f };
+//
+//	pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
+//	pCB->SetData(&vData, sizeof(XMFLOAT4), 1);
+//	CDevice::GetInst()->SetConstBufferToRegister(pCB, 1);	
+//
+//	g_pMesh->render();*/
+//
+//	// 그리기 종료
+//	CDevice::GetInst()->render_present();
+//}
+//
+//void TestRelease()
+//{
+//	SAFE_DELETE(g_pMesh);
+//	SAFE_DELETE(g_pShader);
+//}
 
 int GetSizeofFormat(DXGI_FORMAT _eFormat)
 {
@@ -299,4 +320,32 @@ int GetSizeofFormat(DXGI_FORMAT _eFormat)
 	}
 
 	return iRetByte / 8;
+}
+
+void SaveWString( FILE* _pFile, const wstring& _str ) {
+	BYTE c = (BYTE)_str.length();
+	fwrite( &c, 1, 1, _pFile );
+	fwrite( _str.c_str(), 2, c, _pFile );
+}
+
+wchar_t* LoadWString( FILE* _pFile ) {
+	static wchar_t szStr[255] = {};
+
+	BYTE c = 0;
+	fread( &c, 1, 1, _pFile );
+	fread( szStr, 2, c, _pFile );
+	szStr[c] = 0;
+
+	return szStr;
+}
+
+
+void TestRelease() {
+	SAFE_DELETE( g_pMesh );
+
+	SAFE_DELETE( g_pMtrl_0 );
+	SAFE_DELETE( g_pMtrl_1 );
+
+	SAFE_DELETE( g_pShader );
+	SAFE_DELETE( g_pTex );
 }

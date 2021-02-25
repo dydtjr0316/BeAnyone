@@ -1,3 +1,5 @@
-C:\Users\erppp\OneDrive\문서\GitHub\HellGate\output\BeAnyone\x64\Debug\Engine.pdb
-C:\Users\채영문\Desktop\BeAnyone\_BeAnyone\Client\BeAnyone\03 External\Library\Engine\std.cso
 C:\Users\채영문\Desktop\BeAnyone\BeAnyone\03 External\Library\Engine\std.cso
+C:\Users\채영문\Desktop\BeAnyone\BeAnyone\03. External\Library\Engine\std.cso
+C:\Users\채영문\Desktop\BeAnyone\BeAnyone\03 External\Library\Engine\func.cso
+C:\Users\채영문\Desktop\BeAnyone\BeAnyone\03 External\Library\Engine\std3d.cso
+C:\Users\채영문\Desktop\BeAnyone\BeAnyone\03 External\Library\Engine\value.cso

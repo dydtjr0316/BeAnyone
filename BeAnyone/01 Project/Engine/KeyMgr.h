@@ -16,6 +16,17 @@ enum class KEY_TYPE
 	KEY_LALT,
 	KEY_ESC,
 
+	KEY_1,
+	KEY_2,
+	KEY_3,
+	KEY_4,
+	KEY_5,
+	KEY_6,
+	KEY_7,
+	KEY_8,
+	KEY_9,
+	KEY_0,
+
 	KEY_Q,
 	KEY_W,
 	KEY_S,
@@ -60,6 +71,10 @@ class CKeyMgr
 	SINGLE(CKeyMgr);
 private:
 	vector<tKeyState>	m_vecKey;
+	POINT				m_ptMouse;
+	POINT				m_ptOldMouse;
+
+	Vec2				m_vDragDir;
 
 public:
 	void init();
@@ -67,6 +82,8 @@ public:
 
 public:
 	KEY_STATE GetKeyState( KEY_TYPE _eKey ) { return m_vecKey[(UINT)_eKey].eState; }
-
+	const POINT& GetMousePos() { return m_ptMouse; }
+	const POINT& GetPrevMousePos() { return m_ptOldMouse; }
+	Vec2 GetDragDir() { return m_vDragDir; }
 };
 

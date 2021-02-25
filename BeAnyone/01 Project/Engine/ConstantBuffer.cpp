@@ -11,6 +11,7 @@ CConstantBuffer::CConstantBuffer()
 	, m_eRegisterNum(CONST_REGISTER::END)
 	, m_pData(nullptr)
 	, m_tHeapDesc{}
+	, m_iCurCount(0)
 {
 }
 
@@ -76,8 +77,6 @@ void CConstantBuffer::Create(UINT _iBufferSize, UINT _iMaxCount, CONST_REGISTER 
 	}
 
 	// 상수 버퍼에 접근하기 위해서 맵핑을 해둔다 
-	// 21.01.31 Q. 데이터 안 넣었는데 ,, 나중에 넣나?
-	// 21.02.01 A. 나중에 setdata 할 때 데이터 넣음 버퍼랑 맵핑되어 있는 pData에
 	D3D12_RANGE readRange{ 0, 0 };
 	m_pBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_pData));
 }

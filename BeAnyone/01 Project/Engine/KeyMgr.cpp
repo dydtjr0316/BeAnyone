@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "KeyMgr.h"
 
+#include "Device.h"
+#include"Core.h"
+
 // KEY_TYPE 에 대응하는 가상키
 int arrVK[(UINT)KEY_TYPE::KEY_END] =
 {
@@ -15,6 +18,17 @@ int arrVK[(UINT)KEY_TYPE::KEY_END] =
 	VK_LCONTROL, // KEY_LCTRL,
 	VK_MENU,	// KEY_LALT,
 	VK_ESCAPE,	// KEY_ESC,
+
+	'1',//KEY_1,
+	'2',//KEY_2,
+	'3',//KEY_3,
+	'4',//KEY_4,
+	'5',//KEY_5,
+	'6',//KEY_6,
+	'7',//KEY_7,
+	'8',//KEY_8,
+	'9',//KEY_9,
+	'0',//KEY_0,
 
 	'Q',		// KEY_Q, ..
 	'W',
@@ -98,7 +112,10 @@ void CKeyMgr::update() {
 	}
 
 	// 마우스 좌표	
-	//m_ptOldMouse = m_ptMouse;	
-	//GetCursorPos(&m_ptMouse);
-	//ScreenToClient(CCore::GetInst()->GetWindowHwnd(), &m_ptMouse);
+	m_ptOldMouse = m_ptMouse;	
+	GetCursorPos(&m_ptMouse);
+	ScreenToClient(CCore::GetInst()->GetWindowHwnd(), &m_ptMouse);
+
+	m_vDragDir = Vec2( (float)(m_ptMouse.x - m_ptOldMouse.x), (float)(m_ptOldMouse.y - m_ptMouse.y) );
+
 }

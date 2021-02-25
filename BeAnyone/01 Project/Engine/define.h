@@ -14,6 +14,8 @@ static type* GetInst()\
 
 #define DEVICE CDevice::GetInst()->GetDevice()
 #define CMDLIST CDevice::GetInst()->GetCmdList()
+#define CMDLIST_RES CDevice::GetInst()->GetCmdListRes()
+
 
 #define KEY(Key, State) (CKeyMgr::GetInst()->GetKeyState(Key) == State)
 #define KEY_HOLD(Key) KEY(Key, KEY_STATE::STATE_HOLD)
@@ -23,11 +25,20 @@ static type* GetInst()\
 
 #define DT CTimeMgr::GetInst()->GetDeltaTime()
 
-typedef XMFLOAT4 Vec4;
-typedef XMFLOAT3 Vec3;
-typedef XMFLOAT2 Vec2;
-typedef XMMATRIX Matrix;
+#define CLONE(type) public: type* Clone() { return new type(*this); }
+#define CLONE_DISABLE(type) type* Clone() { assert(nullptr); return nullptr;} \
+                            type(const type& _class){assert(nullptr);}
+//typedef XMFLOAT4 Vec4;
+//typedef XMFLOAT3 Vec3;
+//typedef XMFLOAT2 Vec2;
+//typedef XMMATRIX Matrix;
 
+#define MAX_LAYER 32
+
+typedef DirectX::SimpleMath::Vector2 Vec2;
+typedef DirectX::SimpleMath::Vector3 Vec3;
+typedef DirectX::SimpleMath::Vector4 Vec4;
+using DirectX::SimpleMath::Matrix;
 
 enum class RES_TYPE
 {
@@ -54,8 +65,6 @@ enum class CONST_REGISTER
 	b2 = 2,
 	b3 = 3,
 	b4 = 4,
-	b5 = 5,
-
 	END,
 };
 
@@ -79,13 +88,18 @@ enum class TEXTURE_REGISTER
 
 enum class RS_TYPE
 {
-	DEFAULT,
+	CULL_BACK,
+	CULL_FRONT,
+	CULL_NONE,
+	WIRE_FRAME,
 	END,
 };
 
 enum class BLEND_TYPE
 {
 	DEFAULT,
+	ALPHABLEND,
+	ONEBLEND,
 	END,
 };
 
@@ -93,10 +107,132 @@ enum class COMPONENT_TYPE
 {
 	TRANSFORM, // 위치, 크기, 회전
 	MESHRENDER, // 물체의 렌더링
+	CAMERA,
 
+	TERRAIN,
+	END,
+	SCRIPT,
+
+};
+
+enum class DEPTH_STENCIL_TYPE
+{
+	LESS,
+	LESS_EQUAL,
+	GRATER,
+	GRATER_EQUAL,
+
+	NO_DEPTHTEST,	//깊이 테스트 X, 깊이기록 o
+	NO_DEPTHTEST_NO_WRITE, // 깊이테스트 X, 깊이기록 X
+	LESS_NO_WRITE,	// Less 깊이테스트, 깊이기록 X
+	END,
+};
+
+enum class SHADER_PARAM
+{
+	INT_0,
+	INT_1,
+	INT_2,
+	INT_3,
+	INT_END,
+
+	FLOAT_0,
+	FLOAT_1,
+	FLOAT_2,
+	FLOAT_3,
+	FLOAT_END,
+
+	VEC2_0,
+	VEC2_1,
+	VEC2_2,
+	VEC2_3,
+	VEC2_END,
+
+	VEC4_0,
+	VEC4_1,
+	VEC4_2,
+	VEC4_3,
+	VEC4_END,
+
+	MATRIX_0,
+	MATRIX_1,
+	MATRIX_2,
+	MATRIX_3,
+	MATRIX_END,
+
+	TEX_0,
+	TEX_1,
+	TEX_2,
+	TEX_3,
+	TEX_END,
+};
+
+enum class FACE_TYPE
+{
+	FT_NEAR,
+	FT_FAR,
+	FT_UP,
+	FT_DOWN,
+	FT_LEFT,
+	FT_RIGHT,
+	FT_END,
+};
+
+enum class EVENT_TYPE
+{
+	CREATE_OBJECT,	// wParam : GameObject, lParam : Layer Idx
+	DELETE_OBJECT,	// wParam : GameObject,
+	ADD_CHILD,		// wParam : Parent Object, lParam : Child Object
+	CLEAR_PARENT,	// wParam : Target Object
+	TRANSFER_LAYER,	// wParam : Target Object, lParam : (HIWORD)Layer Index (LOWORD)bMoveAll
+	TRANSFER_SCENE,
+	ACTIVATE_GAMEOBJECT,	// wParam : GameObject Adress
+	DEACTIVATE_GAMEOBJECT,	// wParam : GameObject Adress
+
+	ACTIVATE_COMPONENT,		// wParam : Component Adress
+	DEACTIVATE_COMPONENT,	// wParam : Component Adress
 
 	END,
 };
+
+enum class DIR_TYPE
+{
+	RIGHT,
+	UP,
+	FRONT,
+	END,
+};
+
+enum class RT_TYPE
+{
+	SWAPCHAIN,
+
+	DIFFUSE,
+	NORMAL,
+	POSITION,
+
+	LIGHT,
+	SPECULAR,
+
+	SHADOWMAP,
+
+	POSTEFFECT1,
+	POSTEFFECT2,
+
+	END,
+};
+
+enum class MRT_TYPE
+{
+	// MRT			RT 조합
+	SWAPCHAIN,  // SWAPCHAIN
+	DEFERRED,	// DIFFUSE, NORMAL, POSITION
+	LIGHT,		// LIGHT, SPECULAR
+	SHADOWMAP,	// SHADOWMAP
+	POSTEFFECT, // POSTEFFECT1, POSTEFFECT2
+	END,
+};
+
 
 // State Description
 extern D3D12_RASTERIZER_DESC g_arrRSDesc[(UINT)RS_TYPE::END];

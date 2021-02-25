@@ -119,7 +119,7 @@ void CMesh::Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem, DXGI_FORM
 	m_tIdxView.Format = DXGI_FORMAT_R32_UINT;
 	m_tIdxView.SizeInBytes = tResDesc.Width * tResDesc.Height;
 
-	CDevice::GetInst()->FlushCommandQueue();
+	CDevice::GetInst()->WaitForFenceEvent();
 }
 
 void CMesh::render()

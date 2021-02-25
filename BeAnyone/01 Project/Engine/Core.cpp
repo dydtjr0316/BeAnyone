@@ -4,9 +4,13 @@
 #include "Device.h"
 #include "KeyMgr.h"
 #include "TimeMgr.h"
-
+#include "ResMgr.h"
 #include "PathMgr.h"
+#include "SceneMgr.h"
+#include "EventMgr.h"
+#include "RenderMgr.h"
 
+#include "ConstantBuffer.h"
 CCore::CCore()
 	: m_hMainHwnd(nullptr)
 {
@@ -23,21 +27,24 @@ int CCore::init(HWND _hWnd, const tResolution& _resolution, bool _bWindow)
 	ChangeWindowSize(m_hMainHwnd, _resolution);
 	ShowWindow(_hWnd, true);
 
-	if (FAILED(CDevice::GetInst()->initDirect3D (_hWnd, _resolution, _bWindow)))
+	if (FAILED(CDevice::GetInst()->init (_hWnd, _resolution, _bWindow)))
 	{
 		return E_FAIL;
 	}
 
 	// 상수 버퍼 만들기
-	CDevice::GetInst()->CreateConstBuffer(L"GLOBAL_MATRIX_1", sizeof(tTransform), 512, CONST_REGISTER::b0);
-	CDevice::GetInst()->CreateConstBuffer(L"GLOBAL_MATRIX_2", sizeof(tTransform), 512, CONST_REGISTER::b1);
+	CDevice::GetInst()->CreateConstBuffer( L"TRANSFORM_MATRIX", sizeof( tTransform ), 512, CONST_REGISTER::b0 );
+	CDevice::GetInst()->CreateConstBuffer( L"MATERIAL_PARAM", sizeof( tMtrlParam ), 512, CONST_REGISTER::b1 );
+	CDevice::GetInst()->CreateConstBuffer( L"ANIM2D", sizeof( tMtrlParam ), 512, CONST_REGISTER::b2 );
 
 	// 매니저 초기화
 	CPathMgr::init();
 	CKeyMgr::GetInst()->init();
 	CTimeMgr::GetInst()->init();
 
-	TestInit();
+	CResMgr::GetInst()->init();
+	CSceneMgr::GetInst()->init();
+	CRenderMgr::GetInst()->init( _hWnd, _resolution, _bWindow );
 
 	return S_OK;
 }
@@ -55,29 +62,10 @@ void CCore::progress()
 	CKeyMgr::GetInst()->update();
 	CTimeMgr::GetInst()->update();
 
-	update();
-	lateupdate();
-	finalupdate();
-
-	render();
-}
-
-void CCore::update()
-{
-	TestUpdate();
-}
-
-void CCore::lateupdate()
-{
-
-}
-
-void CCore::finalupdate()
-{
-
-}
-
-void CCore::render()
-{
-	TestRender();
+	CEventMgr::GetInst()->clear();
+	{
+		CSceneMgr::GetInst()->update();
+		CRenderMgr::GetInst()->render();
+	}
+	CEventMgr::GetInst()->update();
 }

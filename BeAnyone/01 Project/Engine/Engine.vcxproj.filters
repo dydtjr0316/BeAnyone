@@ -31,6 +31,27 @@
     <Filter Include="04. GameObject\Component">
       <UniqueIdentifier>{4cecacf9-e11e-45fe-8424-7e7e4d14dfe6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. GameObject\Component\Terrain">
+      <UniqueIdentifier>{11b200cf-932e-414e-b704-d356bbf0f816}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\ResMgr">
+      <UniqueIdentifier>{8d80d6f3-7b88-4494-ba21-54a5308fc820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Scene">
+      <UniqueIdentifier>{896bdbf3-e63e-4a0c-8a6a-82b67fb9d380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. GameObject\Component\Camera">
+      <UniqueIdentifier>{42de15e8-27d7-4a7e-97e2-e816ac8423df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. GameObject\Component\Script">
+      <UniqueIdentifier>{b0f26452-0f27-4664-aaaf-3d779fd6dca1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{adf8043b-ba78-49e4-897a-55b4776c7580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Event">
+      <UniqueIdentifier>{809f144a-2e9f-4e21-9a5a-4da849d4b0a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -75,12 +96,6 @@
     <ClInclude Include="Shader.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="PathMgr.h">
-      <Filter>Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyMgr.h">
-      <Filter>Manager</Filter>
-    </ClInclude>
     <ClInclude Include="resource1.h" />
     <ClInclude Include="Texture.h">
       <Filter>Resource</Filter>
@@ -103,8 +118,62 @@
     <ClInclude Include="ptr.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>04. GameObject\Component\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ResMgr.h">
+      <Filter>Manager\ResMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="extern.h">
+      <Filter>01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>04. GameObject\Component\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>04. GameObject\Component\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>0. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolCamScript.h">
+      <Filter>04. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMgr.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="EventMgr.h">
+      <Filter>Manager\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyMgr.h">
+      <Filter>Manager\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="PathMgr.h">
+      <Filter>Manager\Event</Filter>
+    </ClInclude>
     <ClInclude Include="TimeMgr.h">
-      <Filter>Manager</Filter>
+      <Filter>Manager\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>04. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerScript.h">
+      <Filter>04. GameObject\Component\Script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -135,12 +204,6 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="PathMgr.cpp">
-      <Filter>Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyMgr.cpp">
-      <Filter>Manager</Filter>
-    </ClCompile>
     <ClCompile Include="desc.cpp">
       <Filter>0. Default</Filter>
     </ClCompile>
@@ -159,16 +222,81 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>04. GameObject\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>04. GameObject\Component\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ResMgr.cpp">
+      <Filter>Manager\ResMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>04. GameObject\Component\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>04. GameObject\Component\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMath.cpp">
+      <Filter>0. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolCamScript.cpp">
+      <Filter>04. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderMgr.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="EventMgr.cpp">
+      <Filter>Manager\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyMgr.cpp">
+      <Filter>Manager\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="PathMgr.cpp">
+      <Filter>Manager\Event</Filter>
+    </ClCompile>
     <ClCompile Include="TimeMgr.cpp">
-      <Filter>Manager</Filter>
+      <Filter>Manager\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>04. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerScript.cpp">
+      <Filter>04. GameObject\Component\Script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="std.fx">
+    <FxCompile Include="..\..\02 File\bin\content\Shader\func.fx">
       <Filter>ShaderCode</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\02 File\bin\content\Shader\std.fx">
+      <Filter>ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\02 File\bin\content\Shader\std3d.fx">
+      <Filter>ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\02 File\bin\content\Shader\value.fx">
+      <Filter>ShaderCode</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleMath.inl">
+      <Filter>01. Header</Filter>
+    </None>
   </ItemGroup>
 </Project>
