@@ -1,6 +1,4 @@
 #pragma once
-//typedef DirectX::SimpleMath::Vector3 Vec3;
-
 class CNetMgr
 {
 public:
@@ -34,6 +32,7 @@ public:
 private:
 	OVERLAPPED m_overlapped;
 	//Vec3 m_v3testPos;
+	//Vec3 k;
 
 };
 

@@ -5,14 +5,14 @@
 #include "main.h"
 #include "CNetMgr.h"
 
-#include <Engine/global.h>
-#include <Engine/core.h>
-
-#ifdef _DEBUG
-#pragma comment(lib, "Engine/Engine_debug.lib")
-#else
-#pragma comment(lib, "Engine/Engine.lib")
-#endif
+//#include <Engine/global.h>
+//#include <Engine/core.h>
+//
+//#ifdef _DEBUG
+//#pragma comment(lib, "Engine/Engine_debug.lib")
+//#else
+//#pragma comment(lib, "Engine/Engine.lib")
+//#endif
 
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
