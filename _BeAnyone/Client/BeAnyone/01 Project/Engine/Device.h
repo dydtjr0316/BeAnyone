@@ -74,6 +74,7 @@ public:
 	void SetConstBufferToRegister(CConstantBuffer* _pCB, UINT _iOffset);
 	void SetGlobalConstBufferToRegister(CConstantBuffer* _pCB, UINT _iOffset);
 	void SetTextureToRegister(CTexture* _pTex, TEXTURE_REGISTER _eRegister);
+	void ClearDummyDescriptorHeap(UINT _iDummyIndex);
 
 	
 

@@ -283,29 +283,6 @@ void CDevice::CreateView()
 
 	m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), nullptr, DepthStencilView());
 
-	////D3D12_RESOURCE_BARRIER barrier = {};
-	////barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	////barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	////barrier.Transition.pResource = mDepthStencilBuffer.Get();
-	////barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
-	////barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-	////
-	////// Transition the resource from its initial state to be used as a depth buffer.
-	////mCommandList->ResourceBarrier(1, &barrier);
-
-	//// d3dx12.h 헤더가 포함되어야 CD3DX12_~ 를 쓸 수 있음
-	///*mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer.Get(),
-	//	D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));*/
-
-	//// Execute the resize commands.
-	////m_pCommandList->Close();
-
-	////ID3D12CommandList* cmdsLists[] = { m_pCommandList.Get() };
-	////m_pCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-	////// Wait until resize is complete.
-	////FlushCommandQueue();
-	//// -> 이 부분 닫힌 명령 목룍 오류 뜸
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE CDevice::DepthStencilView() const
@@ -398,6 +375,8 @@ void CDevice::CreateRootSignature()
 	}
 
 	// 초기화용 더미 디스크립터 힙 작성
+	dummyCbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	m_pDevice->CreateDescriptorHeap(&dummyCbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
 }
 
 void CDevice::CreateSamplerDesc()
@@ -493,6 +472,14 @@ void CDevice::UpdateTable()
 
 	// 다음 더미 Descriptor Heap 을 가리키게 인덱스를 증가시킨다.
 	++m_iCurDummyIdx;
+
+	// 다음 더미 Descriptor Heap을 초기화한다 (전역 상수 버퍼는 남는다)
+	ClearDummyDescriptorHeap(m_iCurDummyIdx);
+}
+
+void CDevice::ClearDummyDescriptorHeap(UINT _iDummyIndex)
+{
+
 }
 
 void CDevice::ExcuteResourceLoad()

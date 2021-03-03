@@ -3,7 +3,7 @@
 
 #include "Layer.h"
 #include "GameObject.h"
-//#include "Camera.h"
+#include "Camera.h"
 
 //#include "EventMgr.h"
 

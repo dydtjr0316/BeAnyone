@@ -3,7 +3,7 @@
 
 class CLayer;
 class CGameObject;
-//class CCamera;
+class CCamera;
 
 class CScene :
 	public CEntity
