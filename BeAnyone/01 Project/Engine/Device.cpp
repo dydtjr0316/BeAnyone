@@ -12,6 +12,7 @@ CDevice::CDevice()
 	, m_hFenceEvent( nullptr )
 	, m_iFenceValue( 0 )
 	, m_iCurDummyIdx( 0 ) {
+	//m_vecCB.resize( (UINT)CONST_REGISTER::b3 );
 }
 
 CDevice::~CDevice() {
@@ -85,7 +86,6 @@ int CDevice::init( HWND _hWnd, const tResolution& _res, bool _bWindow ) {
 	return S_OK;
 }
 
-
 void CDevice::render_start( float( &_arrFloat )[4] ) {
 	m_iCurDummyIdx = 0;
 
@@ -98,7 +98,7 @@ void CDevice::render_start( float( &_arrFloat )[4] ) {
 
 	// 필요한 상태 설정	
 	// RootSignature 설정	
-	CMDLIST->SetGraphicsRootSignature( CDevice::GetInst()->GetRootSignature( ROOT_SIG_TYPE::INPUT_ASSEM ).Get() );
+	CMDLIST->SetGraphicsRootSignature( CDevice::GetInst()->GetRootSignature( ROOT_SIG_TYPE::RENDER ).Get() );
 
 	//vector<ID3D12DescriptorHeap*> vecCBV;	
 	//for (UINT i = 0; i < 1; ++i)
@@ -106,7 +106,6 @@ void CDevice::render_start( float( &_arrFloat )[4] ) {
 	//	vecCBV.push_back(m_pDummyCVB[i].Get());
 	//}	
 	// m_pCmdListGraphic->SetDescriptorHeaps(1/*vecCBV.size()*/, &vecCBV[0]);	
-
 	m_pCmdListGraphic->RSSetViewports( 1, &m_tVP );
 	m_pCmdListGraphic->RSSetScissorRects( 1, &m_tScissorRect );
 
@@ -294,7 +293,7 @@ void CDevice::CreateRootSignature() {
 	D3D12_DESCRIPTOR_RANGE range = {};
 
 	range.BaseShaderRegister = 0;  // b0 에서
-	range.NumDescriptors = 5;	   // b4 까지 5개 상수레지스터 사용여부 
+	range.NumDescriptors = (UINT)CONST_REGISTER::END;	   // b4 까지 5개 상수레지스터 사용여부 
 	range.OffsetInDescriptorsFromTableStart = -1;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -303,7 +302,7 @@ void CDevice::CreateRootSignature() {
 	range = {};
 	range.BaseShaderRegister = 0;  // t0 에서
 	range.NumDescriptors = 13;	   // t12 까지 13 개 텍스쳐 레지스터 사용여부 
-	range.OffsetInDescriptorsFromTableStart = 5;
+	range.OffsetInDescriptorsFromTableStart = (UINT)CONST_REGISTER::END;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	vecRange.push_back( range );
@@ -327,7 +326,7 @@ void CDevice::CreateRootSignature() {
 	ComPtr<ID3DBlob> pSignature;
 	ComPtr<ID3DBlob> pError;
 	HRESULT hr = D3D12SerializeRootSignature( &sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pSignature, &pError );
-	m_pDevice->CreateRootSignature( 0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS( &m_arrSig[(UINT)ROOT_SIG_TYPE::INPUT_ASSEM] ) );
+	m_pDevice->CreateRootSignature( 0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS( &m_arrSig[(UINT)ROOT_SIG_TYPE::RENDER] ) );
 
 	// 더미용 Descriptor Heap 만들기
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
@@ -457,10 +456,8 @@ void CDevice::ClearDymmyDescriptorHeap( UINT _iDummyIndex ) {
 	UINT iDestRange = (UINT)TEXTURE_REGISTER::END;
 	UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
 
-	m_pDevice->CopyDescriptors( 1/*디스크립터 개수*/
-								, &hDescHandle, &iDestRange
-								, 1/*디스크립터 개수*/
-								, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV );
+	m_pDevice->CopyDescriptors( 1/*디스크립터 개수*/, &hDescHandle, &iDestRange, 1/*디스크립터 개수*/, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV );
+
 }
 
 void CDevice::UpdateTable() {

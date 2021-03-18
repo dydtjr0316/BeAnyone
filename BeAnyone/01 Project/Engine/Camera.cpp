@@ -22,7 +22,8 @@ CCamera::CCamera()
 	, m_fFOV( XM_PI / 4.f )
 	, m_fScale( 1.f )
 	, m_eProjType( PROJ_TYPE::ORTHGRAPHIC )
-	, m_iLayerCheck( 0 ) {
+	, m_iLayerCheck( 0 ) 
+	, m_bModule(false)	{
 }
 
 CCamera::~CCamera() {
@@ -123,3 +124,36 @@ void CCamera::LoadFromScene( FILE* _pFile ) {
 	fread( &m_eProjType, sizeof( UINT ), 1, _pFile );
 	fread( &m_iLayerCheck, 4, 1, _pFile );
 }
+
+
+//void CCamera::SortShadowObject() {
+//	m_vecShadowObj.clear();
+//
+//	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
+//	CLayer* pLayer = nullptr;
+//
+//	for (UINT i = 0; i < MAX_LAYER; ++i)
+//	{
+//		pLayer = pCurScene->GetLayer( i );
+//		if (nullptr == pLayer || !(m_iLayerCheck & (1 << i)))
+//			continue;
+//
+//		const vector<CGameObject*>& vecObj = pLayer->GetObjects();
+//
+//		for (size_t j = 0; j < vecObj.size(); ++j)
+//		{
+//			if (!vecObj[j]->GetFrustumCheck()
+//				 || m_frustum.CheckFrustumSphere( vecObj[j]->Transform()->GetWorldPos(), vecObj[j]->Transform()->GetMaxScale() ))
+//			{
+//				if (vecObj[j]->MeshRender()
+//					 && vecObj[j]->MeshRender()->GetMesh() != nullptr
+//					 && vecObj[j]->MeshRender()->GetSharedMaterial() != nullptr
+//					 && vecObj[j]->MeshRender()->GetSharedMaterial()->GetShader() != nullptr
+//					 && vecObj[j]->MeshRender()->IsDynamicShadow())
+//				{
+//					m_vecShadowObj.push_back( vecObj[j] );
+//				}
+//			}
+//		}
+//	}
+//}

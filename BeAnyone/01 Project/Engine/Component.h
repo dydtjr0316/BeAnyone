@@ -36,6 +36,8 @@ public:
 	CTransform* Transform() { return m_pObject->Transform(); }
 	CMeshRender* MeshRender() { return m_pObject->MeshRender(); }
 	CCamera* Camera() { return m_pObject->Camera(); }
+	CLight3D* Light3D() { return m_pObject->Light3D(); }
+
 
 private:
 	void SetGameObject( CGameObject* _pObject ) { m_pObject = _pObject; }

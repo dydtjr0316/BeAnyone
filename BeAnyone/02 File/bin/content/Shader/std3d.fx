@@ -43,6 +43,7 @@ VS_STD3D_OUTPUT VS_Std3D(VS_STD3D_INPUT _in)
     output.vViewTangent  = normalize(mul(float4(_in.vTangent, 0.f), g_matWV).xyz);
     output.vViewNormal   = normalize(mul(float4(_in.vNormal, 0.f), g_matWV).xyz);
     output.vViewBinormal = normalize(mul(float4(_in.vBinormal, 0.f), g_matWV).xyz);
+
     output.vUV = _in.vUV;
     return output;
 }

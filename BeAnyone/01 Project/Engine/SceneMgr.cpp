@@ -21,15 +21,15 @@
 #include "MeshRenderer.h"
 #include "ToolCamScript.h"
 #include "RenderMgr.h"
-
+#include "Terrain.h"
 //#include "Animator2D.h"
 //#include "Animation2D.h"
 //#include "Collider2D.h"
-//#include "Light2D.h"
-//#include "Light3D.h"
+#include "Light3D.h"
 //#include "CollisionMgr.h"
 //#include "EventMgr.h"
 #include "PlayerScript.h"
+#include "GridScript.h"
 //#include "MonsterScript.h"
 
 CScene* CSceneMgr::GetCurScene() {
@@ -53,6 +53,12 @@ void CSceneMgr::init() {
 
 	// Texture 로드
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\cookie.png" );
+	Ptr<CTexture> pColor = CResMgr::GetInst()->Load<CTexture>( L"Tile", L"Texture\\Tile\\TILE_03.tga" );
+	Ptr<CTexture> pNormal = CResMgr::GetInst()->Load<CTexture>( L"Tile_n", L"Texture\\Tile\\TILE_03_N.tga" );
+
+	Ptr<CTexture> pDiffuseTargetTex = CResMgr::GetInst()->FindRes<CTexture>( L"DiffuseTargetTex" );
+	Ptr<CTexture> pNormalTargetTex = CResMgr::GetInst()->FindRes<CTexture>( L"NormalTargetTex" );
+	Ptr<CTexture> pPositionTargetTex = CResMgr::GetInst()->FindRes<CTexture>( L"PositionTargetTex" );
 
 	// Test Scene 생성
 	m_pCurScene = new CScene;
@@ -64,36 +70,95 @@ void CSceneMgr::init() {
 	CGameObject* pObject = nullptr;
 
 	// Camera Object 생성
+	CGameObject* pMainCam = new CGameObject;
+	pMainCam->SetName( L"MainCam" );
+	pMainCam->AddComponent( new CTransform );
+	pMainCam->AddComponent( new CCamera );
+	pMainCam->AddComponent( new CToolCamScript );
+
+	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
+	pMainCam->Camera()->SetFar( 1000000.f );
+	pMainCam->Camera()->SetLayerAllCheck();
+
+	m_pCurScene->GetLayer( 0 )->AddGameObject( pMainCam );
+
+	// 3D Light Object
 	pObject = new CGameObject;
 	pObject->AddComponent( new CTransform );
-	pObject->AddComponent( new CCamera );
-	pObject->AddComponent( new CToolCamScript );
+	pObject->AddComponent( new CLight3D );
 
-	pObject->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
-	pObject->Camera()->SetFar( 100000.f );
-	pObject->Camera()->SetLayerAllCheck();
+	pObject->Light3D()->SetLightPos( Vec3( 0.f, 500.f, 1000.f ) );
+	pObject->Light3D()->SetLightType( LIGHT_TYPE::DIR );
+	pObject->Light3D()->SetDiffuseColor( Vec3( 1.f, 1.f, 1.f ) );
+	pObject->Light3D()->SetSpecular( Vec3( 0.3f, 0.3f, 0.3f ) );
+	pObject->Light3D()->SetAmbient( Vec3( 0.1f, 0.1f, 0.1f ) );
+	pObject->Light3D()->SetLightDir( Vec3( 1.f, -1.f, 1.f ) );
+	pObject->Light3D()->SetLightRange( 1000.f );
 
+	pObject->Transform()->SetLocalPos( Vec3( -1000.f, 1000.f, -1000.f ) );
 	m_pCurScene->GetLayer( 0 )->AddGameObject( pObject );
 
 	// temp 오브젝트 생성
 	pObject = new CGameObject;
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CMeshRender );
+	pObject->AddComponent( new CPlayerScript );
 
 	// Transform 설정
-	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 500.f ) );
-	pObject->Transform()->SetLocalScale( Vec3( 150.f, 150.f, 1.f ) );
+	pObject->Transform()->SetLocalPos( Vec3( 300.f, 400.f, 700.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 150.f, 150.f, 150.f ) );
 
 	// MeshRender 설정
-	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
 	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"TestMtrl" ) );
 	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pTex.GetPointer() );
-
-	// Script 설정
-	pObject->AddComponent( new CPlayerScript );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_1, pNormal.GetPointer() );
 
 	// AddGameObject
 	m_pCurScene->GetLayer( 0 )->AddGameObject( pObject );
+
+	// Grid 오브젝트 생성
+	// ====================
+	pObject = new CGameObject;
+	pObject->SetName( L"Grid" );
+	pObject->FrustumCheck( false );
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CMeshRender );
+	pObject->AddComponent( new CGridScript );
+
+	// Transform 설정
+	pObject->Transform()->SetLocalScale( Vec3( 100000.f, 100000.f, 1.f ) );
+	pObject->Transform()->SetLocalRot( Vec3( XM_PI / 2.f, 0.f, 0.f ) );
+
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"GridMtrl" ) );
+
+	// Script 설정	
+	pObject->GetScript<CGridScript>()->SetToolCamera( pMainCam );
+	pObject->GetScript<CGridScript>()->SetGridColor( Vec3( 0.8f, 0.2f, 0.2f ) );
+
+	// AddGameObject
+	m_pCurScene->GetLayer( 0 )->AddGameObject( pObject );
+
+	// Terrain
+	// ========
+	pObject = new CGameObject;
+	pObject->SetName( L"Terrain" );
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CMeshRender );
+	pObject->AddComponent( new CTerrain );
+
+	pObject->FrustumCheck( false );
+	pObject->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 50.f, 300.f, 50.f ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"TerrainMtrl" ) );
+	pObject->Terrain()->init();
+
+	m_pCurScene->FindLayer( L"Default" )->AddGameObject( pObject );
+
+	// Script 설정
+	//pObject->AddComponent( new CPlayerScript );
 
 	m_pCurScene->awake();
 	m_pCurScene->start();

@@ -6,6 +6,9 @@ class CTransform;
 class CMeshRender;
 class CCamera;
 class CScript;
+class CTerrain;
+class CLight3D;
+
 
 class CGameObject :
 	public CEntity
@@ -43,9 +46,12 @@ public:
 public:
 	void AddComponent( CComponent* _pCom );
 	CComponent* GetComponent( COMPONENT_TYPE _eType ) { return m_arrCom[(UINT)_eType]; }
-	CTransform* Transform() { return (CTransform*)GetComponent( COMPONENT_TYPE::TRANSFORM ); }
 	CMeshRender* MeshRender() { return (CMeshRender*)GetComponent( COMPONENT_TYPE::MESHRENDER ); }
+	CTransform* Transform() { return (CTransform*)GetComponent( COMPONENT_TYPE::TRANSFORM ); }
 	CCamera* Camera() { return (CCamera*)m_arrCom[(UINT)COMPONENT_TYPE::CAMERA]; }
+	CLight3D* Light3D() { return (CLight3D*)m_arrCom[(UINT)COMPONENT_TYPE::LIGHT3D]; }
+	CTerrain* Terrain() { return (CTerrain*)m_arrCom[(UINT)COMPONENT_TYPE::TERRAIN]; }
+
 	template<typename T>
 	T* GetScript();
 

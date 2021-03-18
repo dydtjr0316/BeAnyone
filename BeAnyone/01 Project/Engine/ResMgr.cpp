@@ -35,49 +35,6 @@ void CResMgr::init() {
 	//InitSound();
 }
 
-//Ptr<CTexture> CResMgr::CreateTexture(const wstring _strKey, float _fWidth, float _iHeight
-//	, UINT _iBindFlag, DXGI_FORMAT _eFormat, D3D11_USAGE _eUsage)
-//{
-//	Ptr<CTexture> pTex = FindRes<CTexture>(_strKey);
-//
-//	if (nullptr != pTex)
-//		assert(nullptr);
-//
-//	pTex = new CTexture;	
-//	if (!pTex->Create(_fWidth, _iHeight, _iBindFlag, _eFormat, _eUsage))
-//	{
-//		MessageBox(nullptr, _strKey.c_str(), L"텍스쳐 생성 실패", MB_OK);
-//		assert(nullptr);
-//	}
-//
-//	pTex->SetName(_strKey);
-//
-//	m_mapRes[(UINT)RES_TYPE::TEXTURE].insert(make_pair(_strKey, pTex.GetPointer()));
-//
-//	return pTex;
-//}
-//
-//Ptr<CTexture> CResMgr::CreateTexture(const wstring & _strKey, ID3D11Texture2D * _pTex2D)
-//{
-//	Ptr<CTexture> pTex = FindRes<CTexture>(_strKey);
-//
-//	if (nullptr != pTex)
-//		assert(nullptr);
-//
-//	pTex = new CTexture;
-//	if (!pTex->Create(_pTex2D))
-//	{
-//		MessageBox(nullptr, _strKey.c_str(), L"텍스쳐 생성 실패", MB_OK);
-//		assert(nullptr);
-//	}
-//
-//	pTex->SetName(_strKey);
-//
-//	m_mapRes[(UINT)RES_TYPE::TEXTURE].insert(make_pair(_strKey, pTex.GetPointer()));
-//
-//	return pTex;
-//}
-
 void CResMgr::CreateDefaultMesh() {
 	vector<VTX> vecVTX;
 	vector<UINT> vecIdx;
@@ -531,91 +488,88 @@ void CResMgr::CreateDefaultShader() {
 	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Test", "vs_5_0" );
 	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Test", "ps_5_0" );
 
-	//// BlendState 설정
-	//pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
+	// BlendState 설정
+	//pShader->SetBlendState( BLEND_TYPE::DEFAULT );
 
-	pShader->Create();
+	pShader->Create( SHADER_POV::FORWARD );
 
 	pShader->AddShaderParam( tShaderParam {L"Test Value", SHADER_PARAM::INT_0} );
 
 	AddRes( L"TestShader", pShader );
 
-	//// Texture Shader
-	//pShader = new CShader;
-	//pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Tex", "vs_5_0" );
-	//pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Tex", "ps_5_0" );
+	// Texture Shader
+	// ==============
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Tex", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Tex", "ps_5_0" );
 
-	//// BlendState 설정
-	//pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
+	// BlendState 설정
+	pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
 
-	//// Shader Parameter 알림
-	//pShader->AddShaderParam( tShaderParam {L"Output Texture", SHADER_PARAM::TEX_0} );
-	//pShader->Create();
-	//AddRes( L"TexShader", pShader );
+	// Shader Parameter 알림
+	pShader->AddShaderParam( tShaderParam {L"Output Texture", SHADER_PARAM::TEX_0} );
 
-	//// =================
-	//// Collider2D Shader
-	//// =================
-	//pShader = new CShader;
-	//pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Collider2D", "vs_5_0" );
-	//pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Collider2D", "ps_5_0" );
+	pShader->Create( SHADER_POV::FORWARD );
 
-	//// DepthStencilState 설정
-	//pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST );
+	AddRes( L"TexShader", pShader );
 
-	//pShader->Create( D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINESTRIP );
-	//AddRes( L"Collider2DShader", pShader );
+	// Std3D Shader
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std3d.fx", "PS_Std3D", "ps_5_0" );
+	pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
 
-	//// STD2D Shader
-	//pShader = new CShader;
-	//pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Std2D", "vs_5_0" );
-	//pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Std2D", "ps_5_0" );
+	//pShader->SetRSType(RS_TYPE::WIRE_FRAME);
+	pShader->Create(SHADER_POV::DEFERRED);
 
-	//// BlendState 설정
-	//pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
+	AddRes( L"Std3DShader", pShader );
 
-	//// Parameter 설정
-	//pShader->AddShaderParam( tShaderParam {L"Output Texture", SHADER_PARAM::TEX_0} );
-	//pShader->AddShaderParam( tShaderParam {L"Anim Tex", SHADER_PARAM::TEX_3} );
 
-	//pShader->Create();
-	//AddRes( L"Std2DShader", pShader );
+	// DirLight Shader
+	// ===============
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\light.fx", "VS_DirLight", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\light.fx", "PS_DirLight", "ps_5_0" );
 
-	//// =================
-	//// 2DShadow Shader
-	//// =================
-	//pShader = new CShader;
-	//pShader->CreateVertexShader( L"Shader\\std.fx", "VS_2DShadow", "vs_5_0" );
-	//pShader->CreatePixelShader( L"Shader\\std.fx", "PS_2DShadow", "ps_5_0" );
+	// One-One Blend
+	pShader->SetBlendState( BLEND_TYPE::ONEBLEND );
 
-	//// BlendState 설정
-	//pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
+	// No Depth Test, No Depth Write
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
 
-	//// Parameter 설정
-	//pShader->AddShaderParam( tShaderParam {L"Output Texture", SHADER_PARAM::TEX_0} );
-	//pShader->Create();
-	//AddRes( L"2DShadowShader", pShader );
+	pShader->AddShaderParam( tShaderParam {L"Light Index", SHADER_PARAM::INT_0} );
+	pShader->AddShaderParam( tShaderParam {L"Normal Target Texture", SHADER_PARAM::TEX_0} );
+	pShader->AddShaderParam( tShaderParam {L"Position Target Texture", SHADER_PARAM::TEX_1} );
+	pShader->Create( SHADER_POV::LIGHTING );
 
-	//// Std3D Shader
-	//pShader = new CShader;
-	//pShader->CreateVertexShader( L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0" );
-	//pShader->CreatePixelShader( L"Shader\\std3d.fx", "PS_Std3D", "ps_5_0" );
-	////pShader->SetRSType(RS_TYPE::WIRE_FRAME);
-	//pShader->Create();
-	//AddRes( L"Std3DShader", pShader );
+	AddRes( L"DirLightShader", pShader );
 
-	//// ============
-	//// Skybox Shader
-	//// ============
-	//pShader = new CShader;
-	//pShader->CreateVertexShader( L"Shader\\std3d.fx", "VS_Skybox", "vs_5_0" );
-	//pShader->CreatePixelShader( L"Shader\\std3d.fx", "PS_Skybox", "ps_5_0" );
-	//pShader->SetRasterizerType( RS_TYPE::CULL_FRONT );
-	//pShader->Create();
-	//AddRes( L"SkyboxShader", pShader );
+	// GridShader
+	pShader = new CShader;
+
+	pShader->CreateVertexShader( L"Shader\\tool.fx", "VS_Grid", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\tool.fx", "PS_Grid", "ps_5_0" );
+	pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
+	pShader->SetRasterizerType( RS_TYPE::CULL_NONE );
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::LESS_NO_WRITE );
+	pShader->Create(SHADER_POV::FORWARD);
+	AddRes( L"GridShader", pShader );
+
+	// Terrain Shader
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\terrain.fx", "VS_Terrain", "vs_5_0" );
+	pShader->CreateHullShader( L"Shader\\terrain.fx", "HS_Terrain", "hs_5_0" );
+	pShader->CreateDomainShader( L"Shader\\terrain.fx", "DS_Terrain", "ds_5_0" );
+	pShader->CreatePixelShader( L"Shader\\terrain.fx", "PS_Terrain", "ps_5_0" );
+	pShader->SetRasterizerType( RS_TYPE::WIRE_FRAME );
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::LESS );
+	pShader->Create( SHADER_POV::DEFERRED, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST );
+	AddRes( L"TerrainShader", pShader );
+
 }
 
 void CResMgr::CreateDefaultMaterial() {
+	
 	Ptr<CMaterial> pMtrl = nullptr;
 
 	pMtrl = new CMaterial;
@@ -623,64 +577,33 @@ void CResMgr::CreateDefaultMaterial() {
 	pMtrl->SetShader( FindRes<CShader>( L"TestShader" ) );
 	AddRes( L"TestMtrl", pMtrl );
 
-	/*pMtrl = new CMaterial;
-	pMtrl->DisableFileSave();
-	pMtrl->SetShader( FindRes<CShader>( L"TexShader" ) );
-	AddRes( L"TexMtrl", pMtrl );*/
-
-	/*int a = 0;
+	// Tess Mtrl
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();
-	pMtrl->SetShader( FindRes<CShader>( L"Collider2DShader" ) );
-	pMtrl->SetData( SHADER_PARAM::INT_0, &a );
-	AddRes( L"Collider2DMtrl_0", pMtrl );
+	pMtrl->SetShader( FindRes<CShader>( L"TessShader" ) );
+	AddRes( L"TessMtrl", pMtrl );	
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();
-	pMtrl->SetShader( FindRes<CShader>( L"Collider2DShader" ) );
-	a = 1;
-	pMtrl->SetData( SHADER_PARAM::INT_0, &a );
-	AddRes( L"Collider2DMtrl_1", pMtrl );*/
+	pMtrl->SetShader( FindRes<CShader>( L"Std3DShader" ) );
+	AddRes( L"Std3DMtrl", pMtrl );
 
-	//pMtrl = new CMaterial;
-	//pMtrl->DisableFileSave();
-	//pMtrl->SetShader( FindRes<CShader>( L"Std2DShader" ) );
-	//AddRes( L"Std2DMtrl", pMtrl );
-
-	///*pMtrl = new CMaterial;
-	//pMtrl->DisableFileSave();
-	//pMtrl->SetShader( FindRes<CShader>( L"DirShader" ) );
-	//AddRes( L"DirMtrl", pMtrl );*/
-
-	//pMtrl = new CMaterial;
-	//pMtrl->DisableFileSave();
-	//pMtrl->SetShader( FindRes<CShader>( L"Std3DShader" ) );
-	//AddRes( L"Std3DMtrl", pMtrl );
-
-	/*pMtrl = new CMaterial;
+	// Terrain Mtrl
+	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();
-	pMtrl->SetShader( FindRes<CShader>( L"SkyboxShader" ) );
-	AddRes( L"SkyboxMtrl", pMtrl );*/
+	pMtrl->SetShader( FindRes<CShader>( L"TerrainShader" ) );
+	AddRes( L"TerrainMtrl", pMtrl );
 
-	//pMtrl = new CMaterial;
-	////pMtrl->DisableFileSave();
-	//pMtrl->SetShader(FindRes<CShader>(L"2DShadowShader"));
-	//pMtrl->SetPath(L"Material\\2DShadowMtrl.mtrl");
-	//AddRes(L"Material\\2DShadowMtrl.mtrl", pMtrl);
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader( FindRes<CShader>( L"GridShader" ) );
+	//Ptr<CTexture> pPositionTargetTex = CResMgr::GetInst()->FindRes<CTexture>(L"PositionTargetTex");
+	//pMtrl->SetData(SHADER_PARAM::TEX_0, pPositionTargetTex.GetPointer());
+	AddRes( L"GridMtrl", pMtrl );
+
 }
 
 FMOD_RESULT CHANNEL_CALLBACK( FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype
 							  , FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype
 							  , void* commanddata1, void* commanddata2 );
 
-//void CResMgr::InitSound() {
-//	FMOD::System_Create( &CSound::g_pFMOD );
-//
-//	if (nullptr == CSound::g_pFMOD)
-//	{
-//		assert( nullptr );
-//	}
-//
-//	 32개 채널 생성
-//	CSound::g_pFMOD->init( 32, FMOD_DEFAULT, nullptr );
-//}

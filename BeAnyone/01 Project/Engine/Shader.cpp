@@ -7,23 +7,27 @@
 CShader::CShader()
 	: CResource( RES_TYPE::SHADER )
 	, m_pVSBlob( nullptr )
-	, m_pPSBlob( nullptr )
+	, m_pVSInstBlob( nullptr )
 	, m_pHSBlob( nullptr )
 	, m_pDSBlob( nullptr )
 	, m_pGSBlob( nullptr )
+	, m_pPSBlob( nullptr )
 	, m_pErrBlob( nullptr )
 	, m_pCSBlob( nullptr )
 	, m_pPipelineState( nullptr )
+	, m_pPipelineStateInst( nullptr )
 	, m_eBlendType( BLEND_TYPE::DEFAULT )
+	, m_eRSType(RS_TYPE::CULL_BACK)
 	, m_eDSType( DEPTH_STENCIL_TYPE::LESS )
 	, m_tPipeline {}
+	, m_tCSStateDesc {}
 {
 }
 
 CShader::~CShader() {
 }
 
-void CShader::Create( D3D_PRIMITIVE_TOPOLOGY _eTopology ) {
+void CShader::Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology ) {
 	m_eTopology = _eTopology;
 
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
@@ -35,12 +39,31 @@ void CShader::Create( D3D_PRIMITIVE_TOPOLOGY _eTopology ) {
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 48, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+
+		{ "BLENDWEIGHT"	, 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 88, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+
+		{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0,  D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+
+		{ "WV", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1}	,
+		{ "WV", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 80, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1}	,
+		{ "WV", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1}	,
+		{ "WV", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1}	,
+
+		{ "WVP", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1} ,
+		{ "WVP", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 144, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1} ,
+		{ "WVP", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 160, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1} ,
+		{ "WVP", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 176, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1} ,
+		{ "ROWINDEX", 0, DXGI_FORMAT_R32_SINT, 1, 192, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1}
 	};
 
 	m_tPipeline.InputLayout = {inputElementDescs, _countof( inputElementDescs )};
-	m_tPipeline.pRootSignature = CDevice::GetInst()->GetRootSignature( ROOT_SIG_TYPE::INPUT_ASSEM ).Get();
+	m_tPipeline.pRootSignature = CDevice::GetInst()->GetRootSignature( ROOT_SIG_TYPE::RENDER ).Get();
 
-	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)RS_TYPE::CULL_BACK];
+	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)m_eRSType];
 	m_tPipeline.BlendState = g_arrBlendDesc[(UINT)m_eBlendType];
 
 	m_tPipeline.DepthStencilState = g_arrDepthStencilDesc[(UINT)m_eDSType];
@@ -113,29 +136,32 @@ void CShader::Create( D3D_PRIMITIVE_TOPOLOGY _eTopology ) {
 		assert( nullptr );
 }
 
+void CShader::SetDepthStencilType( DEPTH_STENCIL_TYPE _eType ) {
+	m_eDSType = _eType;
+}
+
 void CShader::CreateVertexShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
 	int iFlag = 0;
 #ifdef _DEBUG
 	iFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-	auto temp = &m_pVSBlob;
 
 	wstring strPath = CPathMgr::GetResPath();
 	strPath += _strPath;
 
 	char* pErr = nullptr;
 
-	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		 _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pVSBlob, &m_pErrBlob ) ))
+	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		 , _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pVSBlob, &m_pErrBlob ) ))
 	{
 		pErr = (char*)m_pErrBlob->GetBufferPointer();
-		MessageBoxA( nullptr, pErr, "Shader Create Failed!", MB_OK );
+		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
 	}
 
 	m_tPipeline.VS = {m_pVSBlob->GetBufferPointer(), m_pVSBlob->GetBufferSize()};
 }
 
-void CShader::CreatePixelShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
+void CShader::CreateVertexInstShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
 	int iFlag = 0;
 #ifdef _DEBUG
 	iFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -146,22 +172,138 @@ void CShader::CreatePixelShader( const wstring& _strPath, const string& _strFunc
 
 	char* pErr = nullptr;
 
-	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		 _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pPSBlob, &m_pErrBlob ) ))
+	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		 , _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pVSInstBlob, &m_pErrBlob ) ))
 	{
 		pErr = (char*)m_pErrBlob->GetBufferPointer();
-		MessageBoxA( nullptr, pErr, "Shader Create Failed !", MB_OK );
+		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
+	}
+}
+
+void CShader::CreateHullShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
+	int iFlag = 0;
+#ifdef _DEBUG
+	iFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += _strPath;
+
+	char* pErr = nullptr;
+
+	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		 , _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pHSBlob, &m_pErrBlob ) ))
+	{
+		pErr = (char*)m_pErrBlob->GetBufferPointer();
+		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
+	}
+
+	m_tPipeline.HS = {m_pHSBlob->GetBufferPointer(), m_pHSBlob->GetBufferSize()};
+}
+
+void CShader::CreateDomainShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
+	int iFlag = 0;
+#ifdef _DEBUG
+	iFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += _strPath;
+
+	char* pErr = nullptr;
+
+	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		 , _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pDSBlob, &m_pErrBlob ) ))
+	{
+		pErr = (char*)m_pErrBlob->GetBufferPointer();
+		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
+	}
+
+	m_tPipeline.DS = {m_pDSBlob->GetBufferPointer(), m_pDSBlob->GetBufferSize()};
+}
+
+void CShader::CreateGeometryShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
+	int iFlag = 0;
+#ifdef _DEBUG
+	iFlag = D3DCOMPILE_DEBUG;
+#endif
+
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += _strPath;
+
+	char* pErr = nullptr;
+
+	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		 , _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pGSBlob, &m_pErrBlob ) ))
+	{
+		pErr = (char*)m_pErrBlob->GetBufferPointer();
+		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
+	}
+
+	m_tPipeline.GS = {m_pGSBlob->GetBufferPointer(), m_pGSBlob->GetBufferSize()};
+}
+
+void CShader::CreatePixelShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
+	int iFlag = 0;
+#ifdef _DEBUG
+	iFlag = D3DCOMPILE_DEBUG;
+#endif
+
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += _strPath;
+
+	char* pErr = nullptr;
+
+	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		 , _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pPSBlob, &m_pErrBlob ) ))
+	{
+		pErr = (char*)m_pErrBlob->GetBufferPointer();
+		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
 	}
 
 	m_tPipeline.PS = {m_pPSBlob->GetBufferPointer(), m_pPSBlob->GetBufferSize()};
 }
 
-void CShader::UpdateData() {
-	CMDLIST->SetPipelineState( m_pPipelineState.Get() );
+void CShader::CreateComputeShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion ) {
+	int iFlag = 0;
+#ifdef _DEBUG
+	iFlag = D3DCOMPILE_DEBUG;
+#endif
+
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += _strPath;
+
+	char* pErr = nullptr;
+
+	if (FAILED( D3DCompileFromFile( strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		 , _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pCSBlob, &m_pErrBlob ) ))
+	{
+		pErr = (char*)m_pErrBlob->GetBufferPointer();
+		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
+	}
+
+	m_tCSStateDesc.pRootSignature = CDevice::GetInst()->GetRootSignature( ROOT_SIG_TYPE::COMPUTE ).Get();
+	m_tCSStateDesc.CS = {m_pCSBlob->GetBufferPointer(), m_pCSBlob->GetBufferSize()};
+
+	DEVICE->CreateComputePipelineState( &m_tCSStateDesc, IID_PPV_ARGS( &m_pPilelineState_CS ) );
+
+	m_ePOV = SHADER_POV::COMPUTE;
+}
+
+void CShader::UpdateData( bool _bInstancing ) {
+	if (_bInstancing)
+	{
+		CMDLIST->SetPipelineState( m_pPipelineStateInst.Get() );
+	}
+	else
+	{
+		CMDLIST->SetPipelineState( m_pPipelineState.Get() );
+	}
+	D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
+	D3D12_PRIMITIVE_TOPOLOGY;
 	CMDLIST->IASetPrimitiveTopology( m_eTopology );
-
 }
 
-void CShader::SetDepthStencilType( DEPTH_STENCIL_TYPE _eType ) {
-	m_eDSType = _eType;
-}
+//void CShader::UpdateData_CS() {
+//	CMDLIST_CS->SetPipelineState( m_pPilelineState_CS.Get() );
+//}

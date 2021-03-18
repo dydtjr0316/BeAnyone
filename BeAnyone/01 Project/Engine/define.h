@@ -13,8 +13,10 @@ static type* GetInst()\
 #define SAFE_DELETE(p) if(nullptr != p) delete p; p = nullptr;
 
 #define DEVICE CDevice::GetInst()->GetDevice()
+
 #define CMDLIST CDevice::GetInst()->GetCmdList()
 #define CMDLIST_RES CDevice::GetInst()->GetCmdListRes()
+#define CMDLIST_CS CDevice::GetInst()->GetCmdListCompute()
 
 
 #define KEY(Key, State) (CKeyMgr::GetInst()->GetKeyState(Key) == State)
@@ -50,11 +52,10 @@ enum class RES_TYPE
 	END,
 };
 
-
 enum class ROOT_SIG_TYPE
 {
-	INPUT_ASSEM,
-	CONST_BUFFER,
+	RENDER,
+	COMPUTE,
 	END,
 };
 
@@ -65,6 +66,8 @@ enum class CONST_REGISTER
 	b2 = 2,
 	b3 = 3,
 	b4 = 4,
+	b5 = 5,
+
 	END,
 };
 
@@ -108,6 +111,7 @@ enum class COMPONENT_TYPE
 	TRANSFORM, // 위치, 크기, 회전
 	MESHRENDER, // 물체의 렌더링
 	CAMERA,
+	LIGHT3D,
 
 	TERRAIN,
 	END,
@@ -233,6 +237,34 @@ enum class MRT_TYPE
 	END,
 };
 
+enum class SHADER_POV
+{
+	DEFERRED,
+	FORWARD,
+	POST_EFFECT,
+	LIGHTING,
+	PARTICLE,
+	POSTEFFECT,
+	COMPUTE, // GPGPU
+	SHADOWMAP,
+};
+
+enum class UAV_REGISTER
+{
+	u0 = (UINT)TEXTURE_REGISTER::END,
+	u1,
+	u2,
+	u3,
+	END,
+};
+
+enum class LIGHT_TYPE
+{
+	DIR,
+	POINT,
+	SPOT,
+	END,
+};
 
 // State Description
 extern D3D12_RASTERIZER_DESC g_arrRSDesc[(UINT)RS_TYPE::END];

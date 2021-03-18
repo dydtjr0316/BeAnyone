@@ -24,7 +24,7 @@ struct tLightColor
 struct tLight3DInfo
 {
     tLightColor tCol;
-    float4      vLightPos;   
+    float4      vLightPos;
     float4      vLightDir;
     int         iLight3DType;
     float       fRange;
@@ -32,20 +32,20 @@ struct tLight3DInfo
     int         ipadding;
 };
 
-
 // constant register 
-cbuffer TRANSFORM_MATRIX : register(b0)
-{
+cbuffer TRANSFORM_MATRIX : register(b0) {
     row_major matrix g_matWorld;
     row_major matrix g_matView;
     row_major matrix g_matProj;
-
     row_major matrix g_matWV;
     row_major matrix g_matWVP;
+
+    row_major matrix g_matWorldInv;
+    row_major matrix g_matViewInv;
+    row_major matrix g_matProjInv;
 };
 
-cbuffer MATERIAL_PARAM : register(b1)
-{
+cbuffer MATERIAL_PARAM : register(b1) {
     float4 g_vDiff;
     float4 g_vSpec;
     float4 g_vEmv;
@@ -75,14 +75,14 @@ cbuffer MATERIAL_PARAM : register(b1)
     row_major float4x4 g_mat_2;
     row_major float4x4 g_mat_3;
 
+    // Texture 전달확인용
     int tex_0;
     int tex_1;
     int tex_2;
     int tex_3;
 };
 
-cbuffer ANIM2D : register(b2)
-{
+cbuffer ANIM2D : register(b2) {
     float2  g_vLT;   // UV 좌상단
     float2  g_vLen;  // UV 길이
     float2  g_vOffset; // Offset
@@ -90,19 +90,23 @@ cbuffer ANIM2D : register(b2)
     int     padding2;
 }
 
-cbuffer LIGHT2D : register(b3)
-{
+cbuffer LIGHT2D : register(b3) {
     tLight2DInfo g_Light2D[100];
     int         g_iLight2DCount;
     int3        padding3;
 };
 
-cbuffer LIGHT3D : register(b4)
-{
+cbuffer LIGHT3D : register(b4) {
     tLight3DInfo    g_Light3D[100];
     int             g_iLight3DCount;
     int3            padding3DLight;
 };
+
+cbuffer GLOBAL : register(b5) {
+    float2  g_vResolution;
+    float   g_fDT;
+    float   g_fAccTime;
+}
 
 Texture2D g_tex_0 : register(t0);
 Texture2D g_tex_1 : register(t1);
@@ -111,12 +115,12 @@ Texture2D g_tex_3 : register(t3);
 Texture2D g_tex_4 : register(t4);
 Texture2D g_tex_5 : register(t5);
 Texture2D g_tex_6 : register(t6);
-Texture2D g_tex_7 : register(t7);
+StructuredBuffer<Matrix> g_arrFinalBoneMat : register(t7);
 
-Texture2DArray g_arrtex_0 : register(t8);
-Texture2DArray g_arrtex_1 : register(t9);
-Texture2DArray g_arrtex_2 : register(t10);
-Texture2DArray g_arrtex_3 : register(t11);
+//Texture2DArray g_arrtex_0 : register(t8);
+//Texture2DArray g_arrtex_1 : register(t9);
+//Texture2DArray g_arrtex_2 : register(t10);
+//Texture2DArray g_arrtex_3 : register(t11);
 
 Texture2D g_tex_anim2D : register(t12);
 
@@ -125,11 +129,11 @@ SamplerState g_sam_0 : register(s0); // anisotrophic
 SamplerState g_sam_1 : register(s1); // point
 
 
-int HasTex(in Texture2D _tex)
-{
+// Debugging
+int HasTex( in Texture2D _tex ) {
     uint iWidth = 0;
     uint iHeight = 0;
-    _tex.GetDimensions(iWidth, iHeight);
+    _tex.GetDimensions( iWidth, iHeight );
 
     if (iWidth == 0 || iHeight == 0)
     {

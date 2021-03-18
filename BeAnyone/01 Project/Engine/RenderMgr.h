@@ -1,12 +1,12 @@
 #pragma once
 
 class CCamera;
+class CLight3D;
+
 //class CBlendState;
 //class CDepthStencilState;
-//class CLight3D;
-//
 //class CRenderTarget24;
-//class CMRT;
+
 
 #include "Ptr.h"
 #include "Texture.h"
@@ -31,7 +31,7 @@ private:
 
 	//tLight2DInfo			m_tLight2DInfo;
 
-	//vector<CLight3D*>		m_vecLight3D;
+	vector<CLight3D*>		m_vecLight3D;
 
 public:
 	void init( HWND _hWnd, const tResolution& _res, bool _bWindow );
@@ -43,20 +43,19 @@ private:
 	void CreateBlendState();
 	void CreateDepthStencilState();
 
-	/*void UpdateLight2D();
-	void UpdateLight3D();*/
+	void UpdateLight3D();
+	void render_lights();
+	void merge_light();
 
 public:
-	/*void RegisterLight2D( const tLight2D& _Light2D ) {
-		if (100 <= m_tLight2DInfo.iCount)
-		{
-			return;
-		}
+	int RegisterLight3D( CLight3D* _pLight3D ) {
+		if (m_vecLight3D.size() >= 100)
+			return -1;
+		m_vecLight3D.push_back( _pLight3D );
+		return (int)m_vecLight3D.size() - 1;
+	}
 
-		m_tLight2DInfo.arrLight2D[m_tLight2DInfo.iCount++] = _Light2D;
-	}*/
-	//void RegisterLight3D( CLight3D* _pLight3D ) { if (m_vecLight3D.size() >= 100) return; m_vecLight3D.push_back( _pLight3D ); }
-
+	CCamera* GetMainCam();
 	CCamera* GetCamera( int _iIdx ) { return m_vecCam[_iIdx]; }
 	void RegisterCamera( CCamera* _pCam ) { m_vecCam.push_back( _pCam ); }
 	void ClearCamera() { m_vecCam.clear(); }

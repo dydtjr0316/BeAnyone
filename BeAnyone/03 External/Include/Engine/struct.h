@@ -39,9 +39,36 @@ struct tTransform
 	Matrix matWorld;
 	Matrix matView;
 	Matrix matProj;
-
 	Matrix matWV;
 	Matrix matWVP;
+	Matrix matWorldInv;
+	Matrix matViewInv;
+	Matrix matProjInv;
 };
 
 extern tTransform g_transform;
+
+struct tLightColor
+{
+	Vec4 vDiff;
+	Vec4 vSpec;
+	Vec4 vAmb;
+};
+
+struct tLight3D
+{
+	tLightColor tColor;
+	Vec4		vLightPos;
+	Vec4		vLightDir;
+	int			iLightType;
+	float		fRange;
+	float		fAngle;
+	int			iPadding;
+};
+
+struct tLight3DInfo
+{
+	tLight3D arrLight3D[100];
+	UINT	 iCurCount;
+	Vec3     vPadding;
+};
